@@ -1,0 +1,1 @@
+# minik-adimlar-mobile-automation
