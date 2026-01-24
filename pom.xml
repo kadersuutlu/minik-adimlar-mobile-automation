@@ -1,31 +1,34 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.minikadimlar</groupId>
-  <artifactId>appium-tests</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>MinikAdimlar-Appium-Tests</name>
-  
-  <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.minikadimlar</groupId>
+	<artifactId>appium-tests</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>MinikAdimlar-Appium-Tests</name>
 
-    <dependencies>
+	<properties>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+	</properties>
 
-        <!-- Appium -->
+	<dependencies>
+
+		<!-- Appium -->
 		<dependency>
-		    <groupId>io.appium</groupId>
-		    <artifactId>java-client</artifactId>
-		    <version>10.0.0</version>
+			<groupId>io.appium</groupId>
+			<artifactId>java-client</artifactId>
+			<version>10.0.0</version>
 		</dependency>
-		
+
 		<!-- Selenium -->
 		<dependency>
-		    <groupId>org.seleniumhq.selenium</groupId>
-		    <artifactId>selenium-java</artifactId>
-		    <version>4.14.0</version>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.40.0</version>
+			<scope>compile</scope>
 		</dependency>
-		
+
 		<!-- JUnit 5 -->
 		<dependency>
 		    <groupId>org.junit.jupiter</groupId>
@@ -34,16 +37,23 @@
 		    <scope>test</scope>
 		</dependency>
 
+		<!-- TestNG -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>7.12.0</version>
+			<scope>test</scope>
+		</dependency>
 
-    </dependencies>
+	</dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-            </plugin>
-        </plugins>
-    </build>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
+			</plugin>
+		</plugins>
+	</build>
 </project>
