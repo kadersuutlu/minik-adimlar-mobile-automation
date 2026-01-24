@@ -5,9 +5,10 @@ import java.time.Duration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
+import pages.OnboardingFirstPage;
+import pages.OnboardingSecondPage;
 
 public class BaseTest {
 	
@@ -29,6 +30,8 @@ public class BaseTest {
 				);
 		
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+		
+		handleOnboarding();
 	}
 	
 
@@ -38,5 +41,11 @@ public class BaseTest {
             driver.quit();
         }
     }
+	
+	protected void handleOnboarding() {
+	    new OnboardingFirstPage(driver).tapContinue();
+	    new OnboardingSecondPage(driver).tapRegister();
+	}
+
 
 }

@@ -11,13 +11,13 @@ public class RegisterTest extends BaseTest {
 	
 	@Test
     public void testSuccessfulRegister() {
-        System.out.println("Kayıt testi başlıyor...");
+        System.out.println("Kayit testi basliyor...");
 
         // 1. Ad ve Soyad Girin
         WebElement nameField = driver.findElement(By.xpath("//android.widget.EditText[@text='Ad ve Soyadınızı Girin']"));
         nameField.sendKeys("Test Kullanıcı");
 
-        // 2. E-Mail Adresinizi Girin
+        // 2. E-Mail Adresinizi Girinalter
         WebElement emailField = driver.findElement(By.xpath("//android.widget.EditText[@text='E-Mail Adresinizi Girin']"));
         emailField.sendKeys("test1@mail.com");
 
@@ -38,10 +38,9 @@ public class RegisterTest extends BaseTest {
         // 7. Devam Et Butonuna Tıkla
         driver.findElement(AppiumBy.accessibilityId("Devam Et")).click();
 
-        System.out.println("Kayıt bilgileri girildi ve 'Devam Et' butonuna tıklandı.");
+        System.out.println("Kayit bilgileri girildi ve 'Devam Et' butonuna tiklandi.");
         
-        // Buradan sonra eğer bir şifre belirleme ekranı geliyorsa 
-        // veya ana sayfaya yönlendiriliyorsa oranın kontrolünü ekleyebilirsin.
+        
     }
 
 }
