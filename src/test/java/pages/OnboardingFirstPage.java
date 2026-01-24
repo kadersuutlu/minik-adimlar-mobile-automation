@@ -9,22 +9,17 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 
 public class OnboardingFirstPage {
-	
-	private AppiumDriver  driver;
+
+	private AppiumDriver driver;
 
 	public OnboardingFirstPage(AppiumDriver driver) {
-	    this.driver = driver;
+		this.driver = driver;
 	}
 
+	private By continueButton = By.xpath("//android.view.ViewGroup[@content-desc='Devam Et']");
 
-    private By continueButton =
-            By.xpath("//android.view.ViewGroup[@content-desc='Devam Et']");
-
-
-    public void tapContinue() {
-        driver.findElement(continueButton).click();
-    }
-	
-	
+	public void tapContinue() {
+		driver.findElement(continueButton).click();
+	}
 
 }

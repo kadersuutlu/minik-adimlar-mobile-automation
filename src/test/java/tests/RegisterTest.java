@@ -1,46 +1,19 @@
 package tests;
 
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
 import base.BaseTest;
-import io.appium.java_client.AppiumBy;
+import pages.RegisterPage;
 
 public class RegisterTest extends BaseTest {
-	
-	@Test
-    public void testSuccessfulRegister() {
-        System.out.println("Kayit testi basliyor...");
 
-        // 1. Ad ve Soyad Girin
-        WebElement nameField = driver.findElement(By.xpath("//android.widget.EditText[@text='Ad ve Soyadınızı Girin']"));
-        nameField.sendKeys("Test Kullanıcı");
+	public void testSuccessfulRegister() {
 
-        // 2. E-Mail Adresinizi Girinalter
-        WebElement emailField = driver.findElement(By.xpath("//android.widget.EditText[@text='E-Mail Adresinizi Girin']"));
-        emailField.sendKeys("test1@mail.com");
+		System.out.println("Register test started...");
 
-        // 3. Telefon Numarasını Girin
-        WebElement phoneField = driver.findElement(By.xpath("//android.widget.EditText[@text='+90 (5__) ___ __ __']"));
-        phoneField.sendKeys("5554443322"); // Başına 0 koymadan veya maskeye uygun deneyebilirsin
+		RegisterPage registerPage = new RegisterPage(driver);
 
-        // 4. KVKK Onayı (Content-desc kullanarak)
-        // Not: content-desc varsa AppiumBy.accessibilityId kullanmak en sağlıklısıdır
-        driver.findElement(AppiumBy.accessibilityId("KVKK metnini okudum, onaylıyorum.*")).click();
+		registerPage.register("Test Kullanıcı", "test1@mail.com", "5554443322");
 
-        // 5. Kullanıcı Sözleşmesi Onayı
-        driver.findElement(AppiumBy.accessibilityId("Kullanıcı Sözleşmesi'ni okudum, onaylıyorum.*")).click();
+		System.out.println("Register flow completed.");
 
-        // 6. Gizlilik Sözleşmesi Onayı
-        driver.findElement(AppiumBy.accessibilityId("Gizlilik Sözleşmesi'ni okudum, onaylıyorum.*")).click();
-
-        // 7. Devam Et Butonuna Tıkla
-        driver.findElement(AppiumBy.accessibilityId("Devam Et")).click();
-
-        System.out.println("Kayit bilgileri girildi ve 'Devam Et' butonuna tiklandi.");
-        
-        
-    }
-
+	}
 }

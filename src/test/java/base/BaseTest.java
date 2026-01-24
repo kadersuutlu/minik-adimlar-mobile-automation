@@ -11,41 +11,33 @@ import pages.OnboardingFirstPage;
 import pages.OnboardingSecondPage;
 
 public class BaseTest {
-	
+
 	protected AndroidDriver driver;
-	
+
 	@BeforeEach
-	public void setUp() throws Exception{
-		
-		UiAutomator2Options options = new UiAutomator2Options()
-				.setDeviceName("Android Device")
-                .setUdid("R5CX631QKAD")
-                .setApp("C:/apk/minikadimlar.apk")
-                .setAutoGrantPermissions(true)
-                .setAndroidInstallTimeout(Duration.ofSeconds(180));
-		
-		driver=new AndroidDriver(
-				new URL("http://127.0.0.1:4723"),
-				options
-				);
-		
+	public void setUp() throws Exception {
+
+		UiAutomator2Options options = new UiAutomator2Options().setDeviceName("Android Device").setUdid("R5CX631QKAD")
+				.setApp("C:/apk/minikadimlar.apk").setAutoGrantPermissions(true)
+				.setAndroidInstallTimeout(Duration.ofSeconds(180));
+
+		driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), options);
+
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-		
+
 		handleOnboarding();
 	}
-	
 
 	@AfterEach
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
-    }
-	
-	protected void handleOnboarding() {
-	    new OnboardingFirstPage(driver).tapContinue();
-	    new OnboardingSecondPage(driver).tapRegister();
+	public void tearDown() {
+		if (driver != null) {
+			driver.quit();
+		}
 	}
 
+	protected void handleOnboarding() {
+		new OnboardingFirstPage(driver).tapContinue();
+		new OnboardingSecondPage(driver).tapRegister();
+	}
 
 }
