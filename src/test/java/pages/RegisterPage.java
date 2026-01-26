@@ -28,7 +28,6 @@ public class RegisterPage {
 	private By privacyAgreementCheckbox = AppiumBy.accessibilityId("Gizlilik Sözleşmesi'ni okudum, onaylıyorum.*");
 
 	private By registerTitle = By.xpath("//android.widget.TextView[@text='Kayıt Ol']");
-	
 
 	public boolean isDisplayed() {
 		return driver.findElement(registerTitle).isDisplayed();
