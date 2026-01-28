@@ -19,24 +19,36 @@ public class BaseTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 
-		UiAutomator2Options options = new UiAutomator2Options().setDeviceName("Android Device").setUdid("R5CX631QKAD")
-				.setApp("C:/apk/minikadimlar.apk").setAutoGrantPermissions(true)
-				.setAndroidInstallTimeout(Duration.ofSeconds(180));
+		// --- Option 1: Real Device Settings ---
+		UiAutomator2Options realDeviceOptions = new UiAutomator2Options().setDeviceName("Android Device")
+				.setUdid("R5CX631QKAD").setApp("C:/apk/minikadimlar.apk").setAutoGrantPermissions(true)
+				.setNoReset(false).setAndroidInstallTimeout(Duration.ofMinutes(10));
 
-		driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), options);
+		// --- Option 2: Emulator Settings ---
+		UiAutomator2Options emulatorOptions = new UiAutomator2Options().setDeviceName("Pixel_6")
+				.setUdid("emulator-5554").setApp("C:/apk/minikadimlar.apk").setAppPackage("com.juniors.minikadimlar")
+				.setAppWaitActivity("com.juniors.minikadimlar.MainActivity").setAutoGrantPermissions(true)
+				.setNoReset(false).setAndroidInstallTimeout(Duration.ofMinutes(10));
+
+		driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), emulatorOptions);
+
+		driver.manage().timeouts().implicitlyWait(Duration.ofMinutes(10));
 
 		flow = new AppFlowManager(driver);
-
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
 		handleOnboarding();
 	}
 
 	@AfterEach
 	public void tearDown() {
-		if (driver != null) {
-			driver.quit();
+		try {
+			if (driver != null) {
+				driver.quit();
+			}
+		} catch (Exception e) {
+			System.out.println("Driver quit sırasında hata oluştu: " + e.getMessage());
 		}
+		System.out.println("Test finished.");
 	}
 
 	protected void handleOnboarding() {

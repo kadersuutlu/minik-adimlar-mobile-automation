@@ -1,73 +1,63 @@
 package pages;
 
-import org.openqa.selenium.By;
+import java.time.Duration;
 
-import io.appium.java_client.AppiumBy;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import io.appium.java_client.AppiumDriver;
 
 public class RegisterPage {
 
 	private AppiumDriver driver;
+	private WebDriverWait wait;
 
 	public RegisterPage(AppiumDriver driver) {
 		this.driver = driver;
+		this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 	}
 
 	private By nameField = By.xpath("//android.widget.EditText[@text='Ad ve Soyadınızı Girin']");
-
 	private By emailField = By.xpath("//android.widget.EditText[@text='E-Mail Adresinizi Girin']");
-
 	private By phoneField = By.xpath("//android.widget.EditText[@text='+90 (5__) ___ __ __']");
+	private By passwordField = By.xpath("//android.widget.EditText[@text='Şifrenizi Belirleyin']");
 
-	private By passwordField = By.xpath("//android.widget.EditText[@text=\"Şifrenizi Belirleyin\"]");
+	private By kvkkCheckbox = By.xpath("//android.view.ViewGroup[contains(@content-desc, 'KVKK')]");
+	private By userAgreementCheckbox = By
+			.xpath("//android.view.ViewGroup[contains(@content-desc, 'Kullanıcı Sözleşmesi')]");
+	private By privacyCheckbox = By.xpath("//android.view.ViewGroup[contains(@content-desc, 'Gizlilik Sözleşmesi')]");
 
-	private By kvkkCheckbox = AppiumBy.accessibilityId("KVKK metnini okudum, onaylıyorum.*");
+	private By registerButton = By.xpath("//android.widget.TextView[@text='Devam Et']");
 
-	private By userAgreementCheckbox = AppiumBy.accessibilityId("Kullanıcı Sözleşmesi'ni okudum, onaylıyorum.*");
+	public void register(String name, String email, String phone, String password) {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(nameField)).sendKeys(name);
+		System.out.println("Name entered");
 
-	private By privacyAgreementCheckbox = AppiumBy.accessibilityId("Gizlilik Sözleşmesi'ni okudum, onaylıyorum.*");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(emailField)).sendKeys(email);
+		System.out.println("Email entered");
 
-	private By registerTitle = By.xpath("//android.widget.TextView[@text='Kayıt Ol']");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(phoneField)).sendKeys(phone);
+		System.out.println("Phone entered");
 
-	public boolean isDisplayed() {
-		return driver.findElement(registerTitle).isDisplayed();
-	}
-
-	private By continueButton = AppiumBy.accessibilityId("Devam Et");
-
-	public void enterName(String name) {
-		driver.findElement(nameField).sendKeys(name);
-	}
-
-	public void enterEmail(String email) {
-		driver.findElement(emailField).sendKeys(email);
-	}
-
-	public void enterPhone(String phone) {
-		driver.findElement(phoneField).sendKeys(phone);
-	}
-
-	public void enterPassword(String password) {
-		driver.findElement(passwordField).sendKeys(password);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(passwordField)).sendKeys(password);
+		System.out.println("Password entered");
 	}
 
 	public void acceptAgreements() {
-		driver.findElement(kvkkCheckbox).click();
-		driver.findElement(userAgreementCheckbox).click();
-		driver.findElement(privacyAgreementCheckbox).click();
+		wait.until(ExpectedConditions.elementToBeClickable(kvkkCheckbox)).click();
+		System.out.println("KVKK accepted");
+
+		wait.until(ExpectedConditions.elementToBeClickable(userAgreementCheckbox)).click();
+		System.out.println("User Agreement accepted");
+
+		wait.until(ExpectedConditions.elementToBeClickable(privacyCheckbox)).click();
+		System.out.println("Privacy accepted");
 	}
 
-	public void tapContinue() {
-		driver.findElement(continueButton).click();
-	}
-
-	public void register(String name, String email, String phone, String password) {
-		enterName(name);
-		enterEmail(email);
-		enterPhone(phone);
-		enterPassword(password);
-		acceptAgreements();
-		tapContinue();
+	public void clickRegister() {
+		wait.until(ExpectedConditions.elementToBeClickable(registerButton)).click();
+		System.out.println("Register button clicked");
 	}
 
 }

@@ -16,7 +16,7 @@ public class OnboardingFirstPage {
 		this.driver = driver;
 	}
 
-	private By continueButton = By.xpath("//android.view.ViewGroup[@content-desc='Devam Et']");
+	private By continueButton = By.xpath("//android.widget.TextView[@text='Devam Et']");
 
 	public void tapContinue() {
 		driver.findElement(continueButton).click();

@@ -14,7 +14,7 @@ public class OnboardingSecondPage {
 
 	private By registerButton = By.xpath("//android.widget.TextView[@text='Kayıt Ol']");
 
-	By loginButton = By.xpath("//android.widget.TextView[@text='Giriş Yap']");
+	private By loginButton = By.xpath("//android.widget.TextView[@text='Giriş Yap']");
 
 	public void tapRegister() {
 		driver.findElement(registerButton).click();
