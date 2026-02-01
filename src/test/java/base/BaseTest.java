@@ -30,7 +30,7 @@ public class BaseTest {
 				.setAppWaitActivity("com.juniors.minikadimlar.MainActivity").setAutoGrantPermissions(true)
 				.setNoReset(false).setAndroidInstallTimeout(Duration.ofMinutes(10));
 
-		driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), emulatorOptions);
+		driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), realDeviceOptions);
 
 		driver.manage().timeouts().implicitlyWait(Duration.ofMinutes(10));
 
