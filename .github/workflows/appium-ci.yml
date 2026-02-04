@@ -24,11 +24,11 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Appium
-        run: npm install -g appium
+      - name: Install Appium 2.x
+        run: npm install -g appium@2
 
       - name: Install UiAutomator2 driver
-        run: appium driver install uiautomator2
+        run: appium driver install uiautomator2@2.29.1
 
       - name: Run Maven tests
         run: mvn test
