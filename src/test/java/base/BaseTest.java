@@ -5,6 +5,7 @@ import java.time.Duration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.testng.SkipException;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
@@ -29,6 +30,11 @@ public class BaseTest {
 				.setUdid("emulator-5554").setApp("C:/apk/minikadimlar.apk").setAppPackage("com.juniors.minikadimlar")
 				.setAppWaitActivity("com.juniors.minikadimlar.MainActivity").setAutoGrantPermissions(true)
 				.setNoReset(false).setAndroidInstallTimeout(Duration.ofMinutes(10));
+		
+		//Github Actions: CI
+		if (System.getenv("CI") != null) {
+	        throw new SkipException("Skipping Appium tests in CI environment");
+	    }
 
 		driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), realDeviceOptions);
 
