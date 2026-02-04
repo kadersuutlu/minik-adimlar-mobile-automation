@@ -20,15 +20,31 @@ Uygulamanın uçtan uca (E2E) kullanıcı senaryolarını ve regresyon testlerin
 
 ## 📂 Proje Yapısı
 ```plaintext
-├── src
-│   ├── main/java/pages       # Page Object sınıfları (Locators & Actions)
-│   ├── test/java
-│   │   ├── tests             # TestNG test senaryoları
-│   │   └── utils             # DriverFactory, ConfigReader, Helpers
-│   └── test/resources        # config.properties, test verileri
-├── pom.xml                   # Bağımlılık yönetimi
-└── app/                      # Test APK dosyası
+├── .github/
+│   └── workflows/
+│       └── appium-ci.yml        # CI pipeline (GitHub Actions)
+├── src/
+│   └── test/
+│       └── java/
+│           ├── tests            # TestNG test senaryoları
+│           └── base             # BaseTest (driver yönetimi & CI kontrolü)
+├── pom.xml
+└── README.md
 ```
+Not: Proje şu anda erken aşamadadır. DriverFactory, ConfigReader gibi yardımcı
+bileşenlerin ilerleyen fazlarda utils paketi altına taşınması planlanmaktadır.
+
+## 📦 APK Dosyası Hakkında
+
+Testlerde kullanılan APK dosyası, dosya boyutu ve lisans kısıtları nedeniyle
+repo içerisine eklenmemiştir.
+
+Testlerin çalışabilmesi için:
+- Uygulamanın debug APK’sı local olarak temin edilmelidir
+- APK yolu BaseTest içerisinde manuel olarak ayarlanmalıdır
+
+Örnek:
+src/test/resources/app-debug.apk
 
 ## 🏗 Otomasyon Mimarisi
 
