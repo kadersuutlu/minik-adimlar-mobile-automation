@@ -58,7 +58,10 @@ mvn clean test
 ## 🗺️ Yol Haritası
 
 - [x] **Faz 1: Temel Altyapı:** Android (UiAutomator2) mimarisinin kurulması, Page Object Model (POM) yapısının oluşturulması.
-- [ ] **Faz 2: CI/CD Entegrasyonu:** GitHub Actions kullanarak temel bir pipeline oluşturulması (Kod push edildiğinde testlerin otomatik tetiklenmesi).
+- [x] **Faz 2: CI/CD Entegrasyonu:** GitHub Actions kullanarak temel bir pipeline oluşturulması (Kod push edildiğinde testlerin otomatik tetiklenmesi).
+
+Kod deposuna yapılan her push işleminde pipeline tetiklenmekte, UI testleri ise CI ortamında gerekli altyapı bulunmadığı için bilinçli olarak skip edilmektedir.
+
 - [ ] **Faz 3: Test Kapsamı:** Temel kullanıcı akışlarının (Happy Path) ve kritik regresyon senaryolarının otomatize edilmesi.
 - [ ] **Faz 4: Raporlama ve Analiz:** Allure Report entegrasyonu ile test sonuçlarının görselleştirilmesi ve hata anında otomatik ekran görüntüsü yakalama.
 - [ ] **Faz 5: Multi-Platform:** iOS (XCUITest) desteğinin eklenmesi ve cross-platform test kabiliyetinin artırılması.
