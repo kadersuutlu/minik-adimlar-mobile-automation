@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 
 public class RegisterPage {
@@ -19,35 +20,36 @@ public class RegisterPage {
 		System.out.println("RegisterPage initialized");
 	}
 
-	private By nameField = By.xpath("//android.widget.EditText[@text='Ad ve Soyadınızı Girin']");
+	By registerHeader = AppiumBy.accessibilityId("signup_title");
 	
-	public By getNameField() {
-	    return nameField;
+	private By nameField = AppiumBy.accessibilityId("signup_name_input");
+	private By emailField = AppiumBy.accessibilityId("signup_email_input");
+	private By phoneField = AppiumBy.accessibilityId("signup_phone_input");
+	private By passwordField = AppiumBy.accessibilityId("signup_password_input");
+	
+	private By passwordVisibilityIcon = AppiumBy.accessibilityId("signup_password_input_visibility_icon");
+
+	private By kvkkCheckbox = AppiumBy.accessibilityId("signup_name_input");
+	private By userAgreementCheckbox = AppiumBy.accessibilityId("signup_name_input");
+	private By privacyCheckbox = AppiumBy.accessibilityId("signup_name_input");
+
+	private By registerButton = AppiumBy.accessibilityId("signup_continue_button");
+
+	private By emailFormatError = AppiumBy.accessibilityId("signup_email_input_error");
+
+	private By passwordMinLengthError = AppiumBy.accessibilityId("signup_password_input_error");
+
+	private By passwordUppercaseError = AppiumBy.accessibilityId("signup_password_input_error");
+
+	private By passwordLowercaseError = AppiumBy.accessibilityId("signup_password_input_error");
+
+	private By passwordEmptyError = AppiumBy.accessibilityId("signup_password_input_error");
+	
+	private By goToSignInButton = AppiumBy.accessibilityId("signup_go_to_signin_button");
+	
+	public boolean isDisplayed() {
+	    return wait.until(ExpectedConditions.visibilityOfElementLocated(registerHeader)).isDisplayed();
 	}
-	
-	private By emailField = By.xpath("//android.widget.EditText[@text='E-Mail Adresinizi Girin']");
-	private By phoneField = By.xpath("//android.widget.EditText[@text='+90 (5__) ___ __ __']");
-	private By passwordField = By.xpath("//android.widget.EditText[@text='Şifrenizi Belirleyin']");
-
-	private By kvkkCheckbox = By.xpath("//android.view.ViewGroup[contains(@content-desc, 'KVKK')]");
-	private By userAgreementCheckbox = By
-			.xpath("//android.view.ViewGroup[contains(@content-desc, 'Kullanıcı Sözleşmesi')]");
-	private By privacyCheckbox = By.xpath("//android.view.ViewGroup[contains(@content-desc, 'Gizlilik Sözleşmesi')]");
-
-	private By registerButton = By.xpath("//android.widget.TextView[@text='Devam Et']");
-
-	private By emailFormatError = By.xpath("//android.widget.TextView[@text='Lütfen geçerli bir email adresi girin.']");
-
-	private By passwordMinLengthError = By
-			.xpath("//android.widget.TextView[@text='Şifre en az 6 karakter olmalıdır.']");
-
-	private By passwordUppercaseError = By
-			.xpath("//android.widget.TextView[@text='Şifre en az 1 büyük harf içermelidir.']");
-
-	private By passwordLowercaseError = By
-			.xpath("//android.widget.TextView[@text='Şifre en az 1 küçük harf içermelidir.']");
-
-	private By passwordEmptyError = By.xpath("//android.widget.TextView[@text='Şifre zorunludur.']");
 
 	public void enterName(String name) {
 		System.out.println("Entering name: " + name);

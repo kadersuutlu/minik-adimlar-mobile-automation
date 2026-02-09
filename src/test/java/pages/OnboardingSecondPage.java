@@ -2,19 +2,27 @@ package pages;
 
 import org.openqa.selenium.By;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.AppiumBy;
+import io.appium.java_client.android.AndroidDriver;
 
 public class OnboardingSecondPage {
 
-	private AppiumDriver driver;
+	private AndroidDriver driver;
 
-	public OnboardingSecondPage(AppiumDriver driver) {
+	public OnboardingSecondPage(AndroidDriver driver) {
 		this.driver = driver;
 	}
 
-	private By registerButton = By.xpath("//android.widget.TextView[@text='Kayıt Ol']");
+	private By registerButton = AppiumBy.accessibilityId("auth_choice_signup_button");
+	private By loginButton = AppiumBy.accessibilityId("auth_choice_signin_button");
 
-	private By loginButton = By.xpath("//android.widget.TextView[@text='Giriş Yap']");
+	public boolean isRegisterButtonDisplayed() {
+		return driver.findElement(registerButton).isDisplayed();
+	}
+
+	public boolean isLoginButtonDisplayed() {
+		return driver.findElement(loginButton).isDisplayed();
+	}
 
 	public void tapRegister() {
 		driver.findElement(registerButton).click();

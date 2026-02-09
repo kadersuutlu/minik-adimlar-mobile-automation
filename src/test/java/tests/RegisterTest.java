@@ -54,7 +54,7 @@ public class RegisterTest extends BaseTest {
 		registerPage.enterEmail("test123");
 
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
 
 		registerPage.enterPhone("5554443322");
 		registerPage.enterPassword("Test123");
@@ -95,7 +95,7 @@ public class RegisterTest extends BaseTest {
 		registerPage.enterPassword("");
 		
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
 
 		registerPage.acceptAgreements();
 
@@ -113,7 +113,7 @@ public class RegisterTest extends BaseTest {
 		registerPage.enterPassword("Ab123");
 		
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
 
 		registerPage.acceptAgreements();
 
@@ -134,7 +134,7 @@ public class RegisterTest extends BaseTest {
 		registerPage.enterPassword("test123");
 		
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
 
 		registerPage.acceptAgreements();
 
@@ -153,7 +153,7 @@ public class RegisterTest extends BaseTest {
 		registerPage.enterPassword("TEST123");
 		
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
 
 		registerPage.acceptAgreements();
 
