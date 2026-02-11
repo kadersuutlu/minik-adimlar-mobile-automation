@@ -35,5 +35,24 @@ public class AppFlowManager {
 			secondPage.tapRegister();
 		}
 	}
+	
+	public void goToLogin() {
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+		// Onboarding First Page kontrol
+		if (driver.findElements(AppiumBy.accessibilityId("welcome_continue_button")).size() > 0) {
+
+			OnboardingFirstPage firstPage = new OnboardingFirstPage(driver);
+			firstPage.tapContinue();
+		}
+
+		// Onboarding Second Page (Auth Choice)
+		if (driver.findElements(AppiumBy.accessibilityId("auth_choice_signin_button")).size() > 0) {
+
+			OnboardingSecondPage secondPage = new OnboardingSecondPage(driver);
+			secondPage.tapLogin();
+		}
+	}
 
 }

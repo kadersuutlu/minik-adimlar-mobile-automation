@@ -16,6 +16,7 @@ public class LoginPage {
 	public LoginPage(AndroidDriver driver) {
 		this.driver = driver;
 		this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+		System.out.println("Login initialized");
 	}
 
 	By loginHeader = AppiumBy.accessibilityId("signin_title");
@@ -27,9 +28,10 @@ public class LoginPage {
 
 	private By loginButton = AppiumBy.accessibilityId("signin_continue_button");
 
-	private By forgotPasswordField = AppiumBy.accessibilityId("signin_title");
+	private By forgotPasswordField = AppiumBy.accessibilityId("signin_forgot_password_text");
 
-	private By emailFormatError = AppiumBy.accessibilityId("signin_forgot_password_text");
+	private By emailError = AppiumBy.accessibilityId("signin_email_input_error");
+	private By passwordError = AppiumBy.accessibilityId("signup_password_input_error");
 
 	private By goToSignUpButton = AppiumBy.accessibilityId("signin_go_to_signup_button");
 
@@ -38,25 +40,31 @@ public class LoginPage {
 	}
 
 	public void enterEmail(String email) {
-		System.out.println("Entering email: " + email);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(emailField)).sendKeys(email);
-		System.out.println("Email entered and blur triggered");
 	}
 
 	public void enterPassword(String password) {
-		System.out.println("Entering password: [" + password + "]");
 		wait.until(ExpectedConditions.visibilityOfElementLocated(passwordField)).sendKeys(password);
-		System.out.println("Password entered and blur triggered");
 	}
 
 	public void clickLogin() {
-		System.out.println("Clicking Login button");
 		wait.until(ExpectedConditions.elementToBeClickable(loginButton)).click();
 	}
 
+	public String getEmailErrorText() {
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(emailError)).getText();
+	}
+
+	public String getPasswordErrorText() {
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordError)).getText();
+	}
+
 	public boolean isLoginButtonEnabled() {
-		boolean enabled = driver.findElement(loginButton).isEnabled();
-		System.out.println("Login button enabled: " + enabled);
-		return enabled;
+		return driver.findElement(loginButton).isEnabled();
+	}
+
+	public void fillLoginForm(String email, String password) {
+		enterEmail(email);
+		enterPassword(password);
 	}
 }
