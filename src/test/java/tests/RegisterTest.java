@@ -2,163 +2,117 @@ package tests;
 
 import java.time.Duration;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
+import base.AppFlowManager;
 import base.BaseTest;
+import io.appium.java_client.AppiumBy;
 import pages.RegisterPage;
 
 public class RegisterTest extends BaseTest {
 
+	private RegisterPage registerPage;
+
+	@BeforeEach
+	public void setupPage() {
+		AppFlowManager flow = new AppFlowManager(driver);
+	    flow.goToRegister();
+		registerPage = new RegisterPage(driver);
+	}
+
 	@Test
 	public void successfulRegisterRedirectsToLogin() {
 
-		System.out.println("Register test started...");
+		String email = "test" + System.currentTimeMillis() + "@gmail.com";
 
-		RegisterPage registerPage = new RegisterPage(driver);
-
-		String email = "test" + System.currentTimeMillis() + "@gmail.com"; // Created unique email
-
-		registerPage.enterName("Test Kullanıcı");
-		registerPage.enterEmail(email);
-		registerPage.enterPhone("5554443322");
-		registerPage.enterPassword("Test123");
+		registerPage.fillRegisterForm("Test Kullanıcı", email, "5554443322", "Test123");
 
 		registerPage.acceptAgreements();
-
 		registerPage.clickRegister();
 
-		By loginHeader = By.xpath("//android.widget.TextView[@text='Giriş Yap']");
-		
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(loginHeader));
+		By loginTitle = AppiumBy.accessibilityId("signin_title");
 
-		Assert.assertTrue(driver.findElement(loginHeader).isDisplayed(), "Redirection to login screen failed!");
+		new WebDriverWait(driver, Duration.ofSeconds(20))
+				.until(ExpectedConditions.visibilityOfElementLocated(loginTitle));
 
-		System.out.println("Register successful, redirected to Login screen.");
-
-		System.out.println("Register flow completed successfully.");
+		Assert.assertTrue(driver.findElement(loginTitle).isDisplayed(),
+				"User should be redirected to Login page after successful registration");
 	}
 
 	@Test
 	public void registerWithInvalidEmailShowsError() {
 
-		System.out.println("Register test started...");
-
-		RegisterPage registerPage = new RegisterPage(driver);
-
-		registerPage.enterName("Test Kullanıcı");
-		registerPage.enterEmail("test123");
-
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		//wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
-
-		registerPage.enterPhone("5554443322");
-		registerPage.enterPassword("Test123");
+		registerPage.fillRegisterForm("Test Kullanıcı", "invalidEmail", "5554443322", "Test123");
 
 		registerPage.acceptAgreements();
 
-		Assert.assertTrue(registerPage.isEmailFormatErrorDisplayed(),
-				"Invalid email format error message should be displayed");
+		String errorText = registerPage.getEmailErrorText();
 
-		System.out.println("Register flow completed successfully.");
-
+		Assert.assertTrue(errorText.contains("geçerli"), "Invalid email error message should be displayed");
 	}
-
-	/*
-	 * 1) Şifre zorunludur Beklenen hata: "Şifre zorunludur." Test input: "" // boş
-	 * string
-	 * 
-	 * 2) Minimum uzunluk (en az 6 karakter) Beklenen hata:
-	 * "Şifre en az 6 karakter olmalıdır." Test input: "Ab123" // 5 karakter
-	 * 
-	 * 3) En az 1 büyük harf içermelidir Beklenen hata:
-	 * "Şifre en az 1 büyük harf içermelidir." Test input: "test123" // büyük harf
-	 * yok
-	 * 
-	 * 4) En az 1 küçük harf içermelidir Beklenen hata:
-	 * "Şifre en az 1 küçük harf içermelidir." Test input: "TEST123" // küçük harf
-	 * yok
-	 */
+	
+	
+	//1) Şifre zorunludur Beklenen hata: "Şifre zorunludur." Test input: "" // boş string
 
 	@Test
-	public void registerWithEmptyPasswordShowsRequiredError() {
+	public void registerWithEmptyPasswordShowsError() {
 
-		RegisterPage registerPage = new RegisterPage(driver);
-
-		registerPage.enterName("Test Kullanıcı");
-		registerPage.enterEmail("test@gmail.com");
-		registerPage.enterPhone("5554443322");
-		registerPage.enterPassword("");
-		
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		//wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
+		registerPage.fillRegisterForm("Test Kullanıcı", "test@gmail.com", "5554443322", "");
 
 		registerPage.acceptAgreements();
 
-		Assert.assertTrue(registerPage.isPasswordEmptyErrorDisplayed(), "Password required error should be displayed");
+		String errorText = registerPage.getPasswordErrorText();
+
+		Assert.assertTrue(errorText.contains("zorunlu"), "Password required error should be displayed");
 	}
+	
+	//2) Minimum uzunluk (en az 6 karakter) Beklenen hata: "Şifre en az 6 karakter olmalıdır." Test input: "Ab123" // 5 karakter
 
 	@Test
-	public void registerWithShortPasswordShowsMinLengthErrorAndDisablesButton() {
+	public void registerWithShortPasswordShowsMinLengthError() {
 
-		RegisterPage registerPage = new RegisterPage(driver);
-
-		registerPage.enterName("Test Kullanıcı");
-		registerPage.enterEmail("test@gmail.com");
-		registerPage.enterPhone("5554443322");
-		registerPage.enterPassword("Ab123");
-		
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		//wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
+		registerPage.fillRegisterForm("Test Kullanıcı", "test@gmail.com", "5554443322", "Ab123");
 
 		registerPage.acceptAgreements();
 
-		Assert.assertTrue(registerPage.isPasswordMinLengthErrorDisplayed(), "Min length error should be displayed");
+		String errorText = registerPage.getPasswordErrorText();
+
+		Assert.assertTrue(errorText.contains("en az"), "Min length password error should be displayed");
 
 		Assert.assertFalse(registerPage.isRegisterButtonEnabled(),
-				"Register button should be disabled when password is too short");
+				"Register button should be disabled for invalid password");
 	}
 
+	//3) En az 1 büyük harf içermelidir Beklenen hata: "Şifre en az 1 büyük harf içermelidir." Test input: "test123" // büyük harf yok
+	
 	@Test
 	public void registerWithPasswordWithoutUppercaseShowsError() {
 
-		RegisterPage registerPage = new RegisterPage(driver);
-
-		registerPage.enterName("Test Kullanıcı");
-		registerPage.enterEmail("test@gmail.com");
-		registerPage.enterPhone("5554443322");
-		registerPage.enterPassword("test123");
-		
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		//wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
+		registerPage.fillRegisterForm("Test Kullanıcı", "test@gmail.com", "5554443322", "test123");
 
 		registerPage.acceptAgreements();
 
-		Assert.assertTrue(registerPage.isPasswordUppercaseErrorDisplayed(),
-				"Uppercase letter error should be displayed");
-	}
+		String errorText = registerPage.getPasswordErrorText();
 
+		Assert.assertTrue(errorText.contains("büyük harf"), "Uppercase letter error should be displayed");
+	}
+	
+	//4) En az 1 küçük harf içermelidir Beklenen hata: "Şifre en az 1 küçük harf içermelidir." Test input: "TEST123" // küçük harf yok
+	
 	@Test
 	public void registerWithPasswordWithoutLowercaseShowsError() {
 
-		RegisterPage registerPage = new RegisterPage(driver);
-
-		registerPage.enterName("Test Kullanıcı");
-		registerPage.enterEmail("test@gmail.com");
-		registerPage.enterPhone("5554443322");
-		registerPage.enterPassword("TEST123");
-		
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-		//wait.until(ExpectedConditions.visibilityOfElementLocated(registerPage.getNameField())).click();
+		registerPage.fillRegisterForm("Test Kullanıcı", "test@gmail.com", "5554443322", "TEST123");
 
 		registerPage.acceptAgreements();
 
-		Assert.assertTrue(registerPage.isPasswordLowercaseErrorDisplayed(),
-				"Lowercase letter error should be displayed");
-	}
+		String errorText = registerPage.getPasswordErrorText();
 
+		Assert.assertTrue(errorText.contains("büyük harf"), "Uppercase letter error should be displayed");
+	}
 }

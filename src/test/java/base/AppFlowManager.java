@@ -1,8 +1,13 @@
 package base;
 
-import org.openqa.selenium.By;
+import java.time.Duration;
 
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
+import pages.OnboardingFirstPage;
+import pages.OnboardingSecondPage;
 
 public class AppFlowManager {
 
@@ -14,16 +19,21 @@ public class AppFlowManager {
 
 	public void goToRegister() {
 
-		// Onboarding 1
-		if (driver.findElements(By.xpath("//android.widget.TextView[@text='Devam Et']")).size() > 0) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-			driver.findElement(By.xpath("//android.widget.TextView[@text='Devam Et']")).click();
+		// Onboarding First Page kontrol
+		if (driver.findElements(AppiumBy.accessibilityId("welcome_continue_button")).size() > 0) {
+
+			OnboardingFirstPage firstPage = new OnboardingFirstPage(driver);
+			firstPage.tapContinue();
 		}
 
-		// Onboarding 2
-		if (driver.findElements(By.xpath("//android.widget.TextView[@text='Kayıt Ol']")).size() > 0) {
+		// Onboarding Second Page (Auth Choice)
+		if (driver.findElements(AppiumBy.accessibilityId("auth_choice_signup_button")).size() > 0) {
 
-			driver.findElement(By.xpath("//android.widget.TextView[@text='Kayıt Ol']")).click();
+			OnboardingSecondPage secondPage = new OnboardingSecondPage(driver);
+			secondPage.tapRegister();
 		}
 	}
+
 }
