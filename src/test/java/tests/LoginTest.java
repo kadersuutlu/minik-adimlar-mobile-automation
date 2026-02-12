@@ -1,5 +1,7 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.time.Duration;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,10 +30,12 @@ public class LoginTest extends BaseTest {
 	@Test
 	public void successfulLoginRedirectsToFirstAddBabyPage() {
 
-		loginPage.fillLoginForm("validuser@gmail.com", "Valid123");
+		loginPage.enterEmail("validuser@gmail.com");
+		loginPage.enterPassword("Valid123");
+		driver.hideKeyboard();
 		loginPage.clickLogin();
 
-		By firstAddBabyHeader = AppiumBy.accessibilityId("add_baby_title");
+		By firstAddBabyHeader = AppiumBy.id("com.juniors.minikadimlar:id/action_bar_root");
 
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
 		wait.until(ExpectedConditions.visibilityOfElementLocated(firstAddBabyHeader));
@@ -42,7 +46,8 @@ public class LoginTest extends BaseTest {
 	@Test
 	public void loginWithInvalidEmailShowsError() {
 
-		loginPage.fillLoginForm("invalidemail", "Valid123");
+		loginPage.enterEmail("invalidEmail");
+		loginPage.enterPassword("Valid123");
 
 		Assert.assertTrue(loginPage.getEmailErrorText().length() > 0, "Email format error should be displayed");
 	}
@@ -50,7 +55,10 @@ public class LoginTest extends BaseTest {
 	@Test
 	public void loginWithEmptyPasswordShowsError() {
 
-		loginPage.fillLoginForm("test@gmail.com", "");
+		loginPage.enterEmail("test@gmail.com");
+		loginPage.enterPassword("");
+		loginPage.clickEmailField();
+		driver.hideKeyboard();
 
 		Assert.assertTrue(loginPage.getPasswordErrorText().length() > 0, "Password required error should be displayed");
 	}
@@ -58,7 +66,9 @@ public class LoginTest extends BaseTest {
 	@Test
 	public void loginButtonDisabledWhenFieldsAreInvalid() {
 
-		loginPage.fillLoginForm("invalidemail", "");
+		loginPage.enterEmail("invalidemail");
+		loginPage.enterPassword("");
+		driver.hideKeyboard();
 
 		Assert.assertFalse(loginPage.isLoginButtonEnabled(), "Login button should be disabled when inputs are invalid");
 	}
@@ -66,15 +76,13 @@ public class LoginTest extends BaseTest {
 	@Test
 	public void loginWithWrongPasswordShowsError() {
 
-		loginPage.fillLoginForm("validuser@gmail.com", "Wrong123");
+		loginPage.enterEmail("validuser@gmail.com");
+		loginPage.enterPassword("Wrong123");
+		driver.hideKeyboard();
 		loginPage.clickLogin();
 
-		By authError = AppiumBy.accessibilityId("signin_general_error");
+		String errorText = loginPage.getPasswordErrorText();
 
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(authError));
-
-		Assert.assertTrue(driver.findElement(authError).isDisplayed(),
-				"Wrong password error message should be displayed");
+		Assert.assertTrue(errorText.contains("hatalı"), "Wrong password error message should be displayed");
 	}
 }

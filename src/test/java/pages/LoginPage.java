@@ -30,8 +30,8 @@ public class LoginPage {
 
 	private By forgotPasswordField = AppiumBy.accessibilityId("signin_forgot_password_text");
 
-	private By emailError = AppiumBy.accessibilityId("signin_email_input_error");
-	private By passwordError = AppiumBy.accessibilityId("signup_password_input_error");
+	private By emailError = By.xpath("//android.widget.TextView[@text='Bu e-mail adresi kayıtlı değil.']");
+	private By passwordError = By.xpath("//android.widget.TextView[@text='Şifrenizi eksik ya da hatalı girdiniz.']");
 
 	private By goToSignUpButton = AppiumBy.accessibilityId("signin_go_to_signup_button");
 
@@ -40,10 +40,12 @@ public class LoginPage {
 	}
 
 	public void enterEmail(String email) {
+		driver.findElement(emailField).click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(emailField)).sendKeys(email);
 	}
 
 	public void enterPassword(String password) {
+		driver.findElement(passwordField).click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(passwordField)).sendKeys(password);
 	}
 
@@ -66,5 +68,9 @@ public class LoginPage {
 	public void fillLoginForm(String email, String password) {
 		enterEmail(email);
 		enterPassword(password);
+	}
+	
+	public void clickEmailField() {
+		driver.findElement(emailField).click();
 	}
 }
