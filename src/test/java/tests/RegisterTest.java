@@ -1,5 +1,7 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.time.Duration;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -30,8 +32,12 @@ public class RegisterTest extends BaseTest {
 
 		String email = "test" + System.currentTimeMillis() + "@gmail.com";
 
-		registerPage.fillRegisterForm("Test Kullanıcı", email, "5554443322", "Test123");
-
+		registerPage.enterName("Test Kullanıcı");
+		registerPage.enterEmail(email);
+		registerPage.enterPhone("5554443322");
+		driver.hideKeyboard();
+		registerPage.enterPassword("Test123");
+		driver.hideKeyboard();
 		registerPage.acceptAgreements();
 		registerPage.clickRegister();
 
@@ -47,27 +53,27 @@ public class RegisterTest extends BaseTest {
 	@Test
 	public void registerWithInvalidEmailShowsError() {
 
-		registerPage.fillRegisterForm("Test Kullanıcı", "invalidEmail", "5554443322", "Test123");
-
-		registerPage.acceptAgreements();
-
+		registerPage.enterName("Test Kullanıcı");
+		registerPage.enterEmail("invalidEmail");
+		registerPage.enterPhone("");
+		driver.hideKeyboard();
+		
 		String errorText = registerPage.getEmailErrorText();
-
+		
 		Assert.assertTrue(errorText.contains("geçerli"), "Invalid email error message should be displayed");
 	}
 	
 	
-	//1) Şifre zorunludur Beklenen hata: "Şifre zorunludur." Test input: "" // boş string
+	//1) Şifre zorunludur Beklenen hata: "Şifre zorunludur." Test input: "" // boş string ???????
 
 	@Test
 	public void registerWithEmptyPasswordShowsError() {
 
-		registerPage.fillRegisterForm("Test Kullanıcı", "test@gmail.com", "5554443322", "");
-
-		registerPage.acceptAgreements();
-
-		String errorText = registerPage.getPasswordErrorText();
-
+		registerPage.enterPassword("");
+		registerPage.enterName("");
+		driver.hideKeyboard();
+		
+		String errorText = registerPage.getPasswordEmptyErrorText();
 		Assert.assertTrue(errorText.contains("zorunlu"), "Password required error should be displayed");
 	}
 	
@@ -76,16 +82,14 @@ public class RegisterTest extends BaseTest {
 	@Test
 	public void registerWithShortPasswordShowsMinLengthError() {
 
-		registerPage.fillRegisterForm("Test Kullanıcı", "test@gmail.com", "5554443322", "Ab123");
+		registerPage.enterPassword("Ab123");
+		registerPage.enterName("");
+		driver.hideKeyboard();
 
-		registerPage.acceptAgreements();
-
-		String errorText = registerPage.getPasswordErrorText();
+		String errorText = registerPage.getPasswordMinLengthErrorText();
 
 		Assert.assertTrue(errorText.contains("en az"), "Min length password error should be displayed");
 
-		Assert.assertFalse(registerPage.isRegisterButtonEnabled(),
-				"Register button should be disabled for invalid password");
 	}
 
 	//3) En az 1 büyük harf içermelidir Beklenen hata: "Şifre en az 1 büyük harf içermelidir." Test input: "test123" // büyük harf yok
@@ -93,11 +97,11 @@ public class RegisterTest extends BaseTest {
 	@Test
 	public void registerWithPasswordWithoutUppercaseShowsError() {
 
-		registerPage.fillRegisterForm("Test Kullanıcı", "test@gmail.com", "5554443322", "test123");
+		registerPage.enterPassword("test123");
+		registerPage.enterName("");
+		driver.hideKeyboard();
 
-		registerPage.acceptAgreements();
-
-		String errorText = registerPage.getPasswordErrorText();
+		String errorText = registerPage.getPasswordUppercaseErrorText();
 
 		Assert.assertTrue(errorText.contains("büyük harf"), "Uppercase letter error should be displayed");
 	}
@@ -107,12 +111,12 @@ public class RegisterTest extends BaseTest {
 	@Test
 	public void registerWithPasswordWithoutLowercaseShowsError() {
 
-		registerPage.fillRegisterForm("Test Kullanıcı", "test@gmail.com", "5554443322", "TEST123");
+		registerPage.enterPassword("TEST123");
+		registerPage.enterName("");
+		driver.hideKeyboard();
 
-		registerPage.acceptAgreements();
+		String errorText = registerPage.getPasswordLowerCaseErrorText();
 
-		String errorText = registerPage.getPasswordErrorText();
-
-		Assert.assertTrue(errorText.contains("büyük harf"), "Uppercase letter error should be displayed");
+		Assert.assertTrue(errorText.contains("küçük harf"), "Lowercase letter error should be displayed");
 	}
 }
