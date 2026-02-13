@@ -114,7 +114,7 @@ public class LoginTest extends BaseTest {
 
 		ForgotPasswordPage forgotPasswordPage = new ForgotPasswordPage(driver);
 
-		Assert.assertTrue(forgotPasswordPage.isDisplayed(), "Login did not redirect to Forgot Password page");
+		Assert.assertTrue(forgotPasswordPage.isDisplayedForgotPasswordTitle(), "Login did not redirect to Forgot Password page");
 	}
 
 	@Test
