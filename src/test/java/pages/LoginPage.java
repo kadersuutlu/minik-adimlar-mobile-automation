@@ -24,7 +24,8 @@ public class LoginPage {
 	private By emailField = AppiumBy.accessibilityId("signin_email_input");
 	private By passwordField = AppiumBy.accessibilityId("signin_password_input");
 
-	private By passwordVisibilityIcon = AppiumBy.accessibilityId("signin_password_input_visibility_icon");
+	private By passwordVisibilityIcon = AppiumBy
+			.xpath("//*[contains(@resource-id,'signin_password_input_visibility_icon')]");
 
 	private By loginButton = AppiumBy.accessibilityId("signin_continue_button");
 
@@ -69,8 +70,24 @@ public class LoginPage {
 		enterEmail(email);
 		enterPassword(password);
 	}
-	
+
 	public void clickEmailField() {
 		driver.findElement(emailField).click();
+	}
+
+	public void clickForgotPassword() {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(forgotPasswordField)).click();
+	}
+
+	public void clickPasswordVisibility() {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(passwordVisibilityIcon)).click();
+	}
+
+	public String getPasswordText() {
+		return driver.findElement(passwordField).getText();
+	}
+
+	public void clickGoToSignUpButton() {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(goToSignUpButton)).click();
 	}
 }

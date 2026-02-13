@@ -14,7 +14,9 @@ import org.testng.Assert;
 import base.AppFlowManager;
 import base.BaseTest;
 import io.appium.java_client.AppiumBy;
+import pages.ForgotPasswordPage;
 import pages.LoginPage;
+import pages.RegisterPage;
 
 public class LoginTest extends BaseTest {
 
@@ -84,5 +86,44 @@ public class LoginTest extends BaseTest {
 		String errorText = loginPage.getPasswordErrorText();
 
 		Assert.assertTrue(errorText.contains("hatalı"), "Wrong password error message should be displayed");
+	}
+
+	@Test
+	public void visibilityPasswordWhenClickVisibilityPasswordIcon() {
+
+		String password = "Valid123";
+		loginPage.enterPassword(password);
+		driver.hideKeyboard();
+
+		String initialText = loginPage.getPasswordText();
+		Assert.assertNotEquals(initialText, password);
+
+		loginPage.clickPasswordVisibility();
+
+		String visibleText = loginPage.getPasswordText();
+		Assert.assertEquals(visibleText, password);
+
+		loginPage.clickPasswordVisibility();
+		Assert.assertNotEquals(initialText, password);
+	}
+
+	@Test
+	public void forgotPaswordRedirectToForgotPasswordPage() {
+
+		loginPage.clickForgotPassword();
+
+		ForgotPasswordPage forgotPasswordPage = new ForgotPasswordPage(driver);
+
+		Assert.assertTrue(forgotPasswordPage.isDisplayed(), "Login did not redirect to Forgot Password page");
+	}
+
+	@Test
+	public void goToSignUpPageWhenClickGoToSignUpText() {
+
+		loginPage.clickGoToSignUpButton();
+
+		RegisterPage registerPage = new RegisterPage(driver);
+
+		Assert.assertTrue(registerPage.isDisplayed(), "Login did not redirect to Register page");
 	}
 }
