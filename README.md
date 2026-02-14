@@ -70,6 +70,21 @@ appium
 ```bash
 mvn clean test
 ```
+## 🔐 API Base URL Konfigürasyonu
+
+API base URL güvenlik nedeniyle repo içerisinde tutulmamaktadır.
+
+Testlerin çalışabilmesi için base URL JVM argument olarak verilmelidir.
+
+Örnek:
+
+mvn clean test -DbaseUrl=https://your-api-url.com
+
+Framework içerisinde değer şu şekilde okunur:
+
+System.getProperty("baseUrl");
+
+⚠️ Not: Gerçek API URL'leri, token'lar veya gizli bilgiler versiyon kontrolüne dahil edilmemektedir.
 
 ## 🗺️ Yol Haritası
 
