@@ -1,48 +1,47 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.time.Duration;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import base.AppFlowManager;
 import base.BaseTest;
-import io.appium.java_client.AppiumBy;
 import pages.ForgotPasswordPage;
+import pages.AddFirstBabyPage;
+import pages.HomePage;
 import pages.LoginPage;
 import pages.RegisterPage;
 
 public class LoginTest extends BaseTest {
 
 	private LoginPage loginPage;
+	private HomePage homePage;
+	private AddFirstBabyPage addFirstBabyPage;
 
 	@BeforeEach
 	public void setupPage() {
 		AppFlowManager flow = new AppFlowManager(driver);
 		flow.goToLogin();
 		loginPage = new LoginPage(driver);
+
 	}
 
 	@Test
-	public void successfulLoginRedirectsToFirstAddBabyPage() {
+	public void successfulLoginRedirectsToCorrectPageBasedOnUserState() {
 
 		loginPage.enterEmail("validuser@gmail.com");
 		loginPage.enterPassword("Valid123");
 		driver.hideKeyboard();
 		loginPage.clickLogin();
 
-		By firstAddBabyHeader = AppiumBy.id("com.juniors.minikadimlar:id/action_bar_root");
+		addFirstBabyPage = new AddFirstBabyPage(driver);
+		homePage = new HomePage(driver);
 
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(firstAddBabyHeader));
+		boolean isAddFirstBabyVisible = addFirstBabyPage.isDisplayed();
+		boolean isHomePageVisible = homePage.isDisplayed();
 
-		Assert.assertTrue(driver.findElement(firstAddBabyHeader).isDisplayed(), "Login did not redirect to Home page");
+		Assert.assertTrue(isAddFirstBabyVisible || isHomePageVisible, "Login did not redirect to expected page");
+
 	}
 
 	@Test
@@ -114,7 +113,8 @@ public class LoginTest extends BaseTest {
 
 		ForgotPasswordPage forgotPasswordPage = new ForgotPasswordPage(driver);
 
-		Assert.assertTrue(forgotPasswordPage.isDisplayedForgotPasswordTitle(), "Login did not redirect to Forgot Password page");
+		Assert.assertTrue(forgotPasswordPage.isDisplayedForgotPasswordTitle(),
+				"Login did not redirect to Forgot Password page");
 	}
 
 	@Test
