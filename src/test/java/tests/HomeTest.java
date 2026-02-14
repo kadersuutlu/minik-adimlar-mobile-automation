@@ -10,11 +10,13 @@ import base.BaseTest;
 import pages.ContentsPage;
 import pages.HomePage;
 import pages.LoginPage;
+import pages.MyBabyPage;
 
 public class HomeTest extends BaseTest {
 	private HomePage homePage;
 	private ContentsPage contentsPage;
 	private LoginPage loginPage;
+	private MyBabyPage myBabyPage;
 
 	@BeforeEach
 	public void setUpPage() {
@@ -56,5 +58,15 @@ public class HomeTest extends BaseTest {
 		String apiTitle = ContentApi.getFirstContentTitleByAudience("PARENT");
 
 		Assert.assertEquals(uiTitle, apiTitle);
+	}
+	
+	@Test
+	public void myBabyPageOpenWhenClickHowIsYourBabyTodayButton() {
+		
+		homePage.clickHomeBabyFeelingCard();
+		
+		myBabyPage = new MyBabyPage(driver);
+		
+		Assert.assertTrue(myBabyPage.isDisplayed(),"home page did not redirect to my baby page");
 	}
 }
