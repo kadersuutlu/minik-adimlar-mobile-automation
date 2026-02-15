@@ -81,7 +81,7 @@ public class HomeTest extends BaseTest {
 
 		notificationPage = new NotificationPage(driver);
 
-		Assert.assertTrue(notificationPage.isDisplayed(), "home page did not redirect to nıtification page");
+		Assert.assertTrue(notificationPage.isDisplayed(), "home page did not redirect to notification page");
 	}
 
 	@Test
