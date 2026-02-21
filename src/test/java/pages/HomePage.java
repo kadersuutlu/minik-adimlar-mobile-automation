@@ -33,6 +33,11 @@ public class HomePage {
 	
 	private By homeBabyCardAddIcon=AppiumBy.accessibilityId("home_baby_card_add_icon");
 	
+	private By navigationContents = AppiumBy.accessibilityId("İçerikler");
+	private By navigationHome = AppiumBy.accessibilityId("Ana Sayfa");
+	private By navigationMyBaby = AppiumBy.accessibilityId("Bebeğim");
+	private By navigationScedule = AppiumBy.accessibilityId("Takvim");
+	
 	public boolean isDisplayed() {
 		return driver.findElements(homeHeader).size() > 0;
 	}
@@ -59,5 +64,21 @@ public class HomePage {
 	
 	public void clickHomeBabyCardAddIcon() {
 		wait.until(ExpectedConditions.elementToBeClickable(homeBabyCardAddIcon)).click();
+	}
+	
+	public void clickNavigationContents() {
+		wait.until(ExpectedConditions.elementToBeClickable(navigationContents)).click();
+	}
+	
+	public void clickNavigationHome() {
+		wait.until(ExpectedConditions.elementToBeClickable(navigationHome)).click();
+	}
+	
+	public void clickNavigationMyBaby() {
+		wait.until(ExpectedConditions.elementToBeClickable(navigationMyBaby)).click();
+	}
+	
+	public void clickNavigationScedule() {
+		wait.until(ExpectedConditions.elementToBeClickable(navigationScedule)).click();
 	}
 }
