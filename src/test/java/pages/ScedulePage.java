@@ -6,16 +6,16 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import base.BasePage;
 import io.appium.java_client.android.AndroidDriver;
 
-public class NotificationPage extends BasePage{
-
-	public NotificationPage(AndroidDriver driver) {
+public class ScedulePage extends BasePage{
+	
+	public ScedulePage(AndroidDriver driver) {
 		super(driver);
 		System.out.println("NotificationPage initialized");
 	}
 
-	By notificationHeader = By.xpath("//android.widget.TextView[@text='Bildirimler']");
+	By scedulePageHeader = By.xpath("//android.widget.TextView[@text='Takvim']");
 	
 	public boolean isDisplayed() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(notificationHeader)).isDisplayed();
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(scedulePageHeader)).isDisplayed();
 	}
 }

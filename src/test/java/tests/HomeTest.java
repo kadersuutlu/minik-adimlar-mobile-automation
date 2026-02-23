@@ -7,45 +7,26 @@ import org.testng.Assert;
 import api.ContentApi;
 import base.AppFlowManager;
 import base.BaseTest;
-import pages.AddBabyPage;
-import pages.ContentsPage;
-import pages.HomePage;
-import pages.LoginPage;
-import pages.MyBabyPage;
-import pages.NotificationPage;
+import data.TestData;
 
 public class HomeTest extends BaseTest {
-	private HomePage homePage;
-	private ContentsPage contentsPage;
-	private LoginPage loginPage;
-	private MyBabyPage myBabyPage;
-	private NotificationPage notificationPage;
-	private AddBabyPage addBabyPage;
 
 	@BeforeEach
 	public void setUpPage() {
+
 		AppFlowManager flow = new AppFlowManager(driver);
-
-		flow.goToLogin();
-
-		loginPage = new LoginPage(driver);
-		loginPage.enterEmail("validuser@gmail.com");
-		loginPage.enterPassword("Valid123");
-		driver.hideKeyboard();
-
-		loginPage.clickLogin();
-
-		homePage = new HomePage(driver);
-		homePage.waitForHomePage();
-		contentsPage = new ContentsPage(driver);
+        flow.goToLogin();
+        pages.loginPage().fillLoginForm(TestData.LOG_VALID_EMAIL, TestData.FP_NEW_PASSWORD);
+        driver.hideKeyboard();
+        pages.loginPage().clickLogin();
 	}
 
 	@Test
 	public void babyContentShouldMatchApi() {
 
-		homePage.clickHomeBabyContentSeeAllText();
+		pages.homePage().clickHomeBabyContentSeeAllText();
 
-		String uiTitle = contentsPage.getFirstContentTitle();
+		String uiTitle = pages.contentsPage().getFirstContentTitle();
 
 		String apiTitle = ContentApi.getFirstContentTitleByAudience("BABY");
 
@@ -55,9 +36,9 @@ public class HomeTest extends BaseTest {
 	@Test
 	public void parentContentsShouldMatchApi() {
 
-		homePage.clickHomeParentContentSeeAllText();
+		pages.homePage().clickHomeParentContentSeeAllText();
 
-		String uiTitle = contentsPage.getFirstContentTitle();
+		String uiTitle = pages.contentsPage().getFirstContentTitle();
 
 		String apiTitle = ContentApi.getFirstContentTitleByAudience("PARENT");
 
@@ -67,31 +48,48 @@ public class HomeTest extends BaseTest {
 	@Test
 	public void myBabyPageOpenWhenClickHowIsYourBabyTodayButton() {
 
-		homePage.clickHomeBabyFeelingCard();
+		pages.homePage().clickHomeBabyFeelingCard();
 
-		myBabyPage = new MyBabyPage(driver);
-
-		Assert.assertTrue(myBabyPage.isDisplayed(), "home page did not redirect to my baby page");
+		Assert.assertTrue(pages.myBabyPage().isDisplayed(), "home page did not redirect to my baby page");
 	}
 
 	@Test
 	public void notificationPageOpenWhenClickNotificationButton() {
 
-		homePage.clickHomeNotificationId();
+		pages.homePage().clickHomeNotificationId();
 
-		notificationPage = new NotificationPage(driver);
-
-		Assert.assertTrue(notificationPage.isDisplayed(), "home page did not redirect to notification page");
+		Assert.assertTrue(pages.notificationPage().isDisplayed(), "home page did not redirect to notification page");
 	}
 
 	@Test
 	public void addBabyModalShouldBeVisibleWhenClickAddBabyButton() {
 
-		homePage.clickHomeBabyCardAddIcon();
+		pages.homePage().clickHomeBabyCardAddIcon();
 
-		addBabyPage = new AddBabyPage(driver);
-
-		Assert.assertTrue(addBabyPage.isDisplayed(), "Add Baby modal did not appear");
+		Assert.assertTrue(pages.addBabyPage().isDisplayed(), "Add Baby modal did not appear");
 	}
 
+	@Test
+	public void navigateToMyBabiesPage() {
+
+		pages.homePage().clickNavigationMyBaby();
+
+		Assert.assertTrue(pages.myBabyPage().isDisplayed(), "home page did not redirect to my baby page");
+	}
+
+	@Test
+	public void navigateToContentsPage() {
+
+		pages.homePage().clickNavigationContents();
+
+		Assert.assertTrue(pages.contentsPage().isDisplayed(), "home page did not redirect to contents page");
+	}
+
+	@Test
+	public void navigateToScedulePage() {
+
+		pages.homePage().clickNavigationScedule();
+
+		Assert.assertTrue(pages.scedulePage().isDisplayed(), "home page did not redirect to scedule page");
+	}
 }

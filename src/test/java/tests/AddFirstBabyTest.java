@@ -6,82 +6,79 @@ import org.testng.Assert;
 
 import base.AppFlowManager;
 import base.BaseTest;
-import pages.AddFirstBabyPage;
-import pages.LoginPage;
+import data.TestData;
 
 public class AddFirstBabyTest extends BaseTest {
-	AddFirstBabyPage addFirstBabyPage;
-	LoginPage loginPage;
 
-	@BeforeEach
-	public void setUpPage() {
+    @BeforeEach
+    public void setUpPage() {
+    	AppFlowManager flow = new AppFlowManager(driver);
+        flow.goToLogin();
+        pages.loginPage().fillLoginForm(TestData.LOG_VALID_EMAIL, TestData.FP_NEW_PASSWORD);
+        driver.hideKeyboard();
+        pages.loginPage().clickLogin();
+    }
 
-		AppFlowManager flow = new AppFlowManager(driver);
+    @Test
+    public void submitShouldBeEnabledWhenAllRequiredFieldsFilled() {
 
-		flow.goToLogin();
+        pages.addFirstBabyPage().enterBabyName(TestData.BABY_VALID_NAME);
+        driver.hideKeyboard();
+        pages.addFirstBabyPage().enterBirthDate(TestData.BABY_VALID_BIRTHDATE);
+        driver.hideKeyboard();
+        pages.addFirstBabyPage().selectGirl(); // veya TestData.BABY_VALID_GENDER_GIRL
+        pages.addFirstBabyPage().selectRelationship(TestData.BABY_VALID_RELATIONSHIP_MOTHER);
 
-		loginPage = new LoginPage(driver);
-		loginPage.fillLoginForm("validuser2@gmail.com", "Valid123");
-		driver.hideKeyboard();
-		loginPage.clickLogin();
+        Assert.assertTrue(pages.addFirstBabyPage().isSubmitButtonEnabled(),
+                "Submit button should be enabled");
+    }
 
-		addFirstBabyPage = new AddFirstBabyPage(driver);
-		Assert.assertTrue(addFirstBabyPage.isDisplayed(), "Add First Baby page not displayed");
-	}
+    @Test
+    public void submitShouldBeDisabledWhenNameIsEmpty() {
 
-	@Test
-	public void submitShouldBeEnabledWhenAllRequiredFieldsFilled() {
-		addFirstBabyPage.enterBabyName("Mihra");
-		driver.hideKeyboard();
-		addFirstBabyPage.enterBirthDate("17.02.2024");
-		driver.hideKeyboard();
-		addFirstBabyPage.selectGirl();
-		addFirstBabyPage.selectRelationship("Anne");
+        pages.addFirstBabyPage().enterBabyName(TestData.BABY_EMPTY_NAME);
+        driver.hideKeyboard();
+        pages.addFirstBabyPage().enterBirthDate(TestData.BABY_VALID_BIRTHDATE);
+        driver.hideKeyboard();
+        pages.addFirstBabyPage().selectGirl();
+        pages.addFirstBabyPage().selectRelationship(TestData.BABY_VALID_RELATIONSHIP_MOTHER);
 
-		Assert.assertTrue(addFirstBabyPage.isSubmitButtonEnabled(), "Submit button should be enabled");
-	}
+        Assert.assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
+                "Submit button should be disabled when name is empty");
+    }
 
-	@Test
-	public void submitShouldBeDisabledWhenNameIsEmpty() {
-		addFirstBabyPage.enterBabyName("");
-		driver.hideKeyboard();
-		addFirstBabyPage.enterBirthDate("17.02.2024");
-		driver.hideKeyboard();
-		addFirstBabyPage.selectGirl();
-		addFirstBabyPage.selectRelationship("Anne");
+    @Test
+    public void submitShouldBeDisabledWhenBirthDateIsEmpty() {
 
-		Assert.assertFalse(addFirstBabyPage.isSubmitButtonEnabled(),
-				"Submit button should be disabled when name is empty");
-	}
+    	pages.addFirstBabyPage().enterBabyName(TestData.BABY_VALID_NAME);
+        driver.hideKeyboard();
+        pages.addFirstBabyPage().enterBirthDate(TestData.BABY_EMPTY_BIRTHDATE);
+        driver.hideKeyboard();
+        pages.addFirstBabyPage().selectGirl();
+        pages.addFirstBabyPage().selectRelationship(TestData.BABY_VALID_RELATIONSHIP_MOTHER);
 
-	@Test
-	public void submitShouldBeDisabledWhenBirthDateIsEmpty() {
-		addFirstBabyPage.enterBabyName("Mihra");
-		driver.hideKeyboard();
-		addFirstBabyPage.enterBirthDate("");
-		driver.hideKeyboard();
-		addFirstBabyPage.selectGirl();
-		addFirstBabyPage.selectRelationship("Anne");
+        Assert.assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
+                "Submit button should be disabled when birthdate is empty");
+    }
 
-		Assert.assertFalse(addFirstBabyPage.isSubmitButtonEnabled(),
-				"Submit button should be disabled when birthdate is empty");
-	}
+    @Test
+    public void submitShouldBeDisabledWhenGenderNotSelected() {
 
-	@Test
-	public void submitShouldBeDisabledWhenGenderNotSelected() {
-		addFirstBabyPage.enterBabyName("Mihra");
-		driver.hideKeyboard();
-		addFirstBabyPage.enterBirthDate("17.02.2024");
-		driver.hideKeyboard();
-		addFirstBabyPage.selectRelationship("Anne");
+        pages.addFirstBabyPage().enterBabyName(TestData.BABY_VALID_NAME);
+        driver.hideKeyboard();
+        pages.addFirstBabyPage().enterBirthDate(TestData.BABY_VALID_BIRTHDATE);
+        driver.hideKeyboard();
+        pages.addFirstBabyPage().selectRelationship(TestData.BABY_VALID_RELATIONSHIP_MOTHER);
+        // Cinsiyet seçilmiyor
 
-		Assert.assertFalse(addFirstBabyPage.isSubmitButtonEnabled(),
-				"Submit button should be disabled when gender not selected");
-	}
+        Assert.assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
+                "Submit button should be disabled when gender not selected");
+    }
 
-	@Test
-	public void submitShouldBeDisabledWhenNothingFilled() {
-		Assert.assertFalse(addFirstBabyPage.isSubmitButtonEnabled(),
-				"Submit button should be disabled when form is empty");
-	}
+    @Test
+    public void submitShouldBeDisabledWhenNothingFilled() {
+
+        Assert.assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
+                "Submit button should be disabled when form is empty");
+    }
 }

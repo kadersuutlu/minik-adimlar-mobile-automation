@@ -14,8 +14,8 @@ public class AuthApi {
 
 		return given().baseUri(BASE_URL).contentType("application/json").body("""
 				  {
-				    "email": "validuser3@gmail.com",
-				    "password": "Valid1234"
+				    "email": "unique_user1@test.com",
+				    "password": "NewPass123"
 				  }
 				""").when().post("/api/auth/login").then().statusCode(200).extract().jsonPath()
 				.getString("accessToken");

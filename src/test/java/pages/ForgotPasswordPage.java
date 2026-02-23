@@ -1,22 +1,16 @@
 package pages;
 
-import java.time.Duration;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
+import base.BasePage;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 
-public class ForgotPasswordPage {
-
-	private AndroidDriver driver;
-	private WebDriverWait wait;
+public class ForgotPasswordPage extends BasePage{
 
 	public ForgotPasswordPage(AndroidDriver driver) {
-		this.driver = driver;
-		this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+		super(driver);
 	}
 
 	private By forgotPasswordTitle = AppiumBy.accessibilityId("forgot_password_title");
@@ -41,6 +35,8 @@ public class ForgotPasswordPage {
 
 	private By sessionTimeOut = By
 			.xpath("//android.widget.TextView[@text=\"Oturum suresiz doldu. Lutfen tekrar giris yapin.\"]");
+	
+	private By goToAppButton=By.xpath("//android.widget.TextView[@text=\"Uygulamaya Git\"]");
 
 	public boolean isDisplayedForgotPasswordTitle() {
 		return wait.until(ExpectedConditions.visibilityOfElementLocated(forgotPasswordTitle)).isDisplayed();
@@ -97,5 +93,9 @@ public class ForgotPasswordPage {
 	    enterNewPassword(password);
 	    enterNewPasswordConfirm(password);
 	    clickChangePasswordButton();
+	}
+	
+	public void clickGoToAppButton() {
+		wait.until(ExpectedConditions.elementToBeClickable(goToAppButton)).click();
 	}
 }

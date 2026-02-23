@@ -6,124 +6,109 @@ import org.testng.Assert;
 
 import base.AppFlowManager;
 import base.BaseTest;
-import pages.ForgotPasswordPage;
-import pages.AddFirstBabyPage;
-import pages.HomePage;
-import pages.LoginPage;
-import pages.RegisterPage;
+import data.TestData;
 
 public class LoginTest extends BaseTest {
 
-	private LoginPage loginPage;
-	private HomePage homePage;
-	private AddFirstBabyPage addFirstBabyPage;
+    @BeforeEach
+    public void setupPage() {
+        AppFlowManager flow = new AppFlowManager(driver);
+        flow.goToLogin();
+    }
 
-	@BeforeEach
-	public void setupPage() {
-		AppFlowManager flow = new AppFlowManager(driver);
-		flow.goToLogin();
-		loginPage = new LoginPage(driver);
+    @Test
+    public void successfulLoginRedirectsToCorrectPageBasedOnUserState() {
 
-	}
+        pages.loginPage().enterEmail(TestData.LOG_VALID_EMAIL);
+        pages.loginPage().enterPassword(TestData.LOG_VALID_PASSWORD);
+        driver.hideKeyboard();
+        pages.loginPage().clickLogin();
 
-	@Test
-	public void successfulLoginRedirectsToCorrectPageBasedOnUserState() {
+        boolean isAddFirstBabyVisible = pages.addFirstBabyPage().isDisplayed();
+        boolean isHomePageVisible = pages.homePage().isDisplayed();
 
-		loginPage.enterEmail("validuser@gmail.com");
-		loginPage.enterPassword("Valid123");
-		driver.hideKeyboard();
-		loginPage.clickLogin();
+        Assert.assertTrue(isAddFirstBabyVisible || isHomePageVisible, "Login did not redirect to expected page");
+    }
 
-		addFirstBabyPage = new AddFirstBabyPage(driver);
-		homePage = new HomePage(driver);
+    @Test
+    public void loginWithInvalidEmailShowsError() {
 
-		boolean isAddFirstBabyVisible = addFirstBabyPage.isDisplayed();
-		boolean isHomePageVisible = homePage.isDisplayed();
+        pages.loginPage().enterEmail(TestData.LOG_INVALID_EMAIL_FORMAT);
+        pages.loginPage().enterPassword(TestData.LOG_WRONG_PASSWORD);
+        driver.hideKeyboard();
 
-		Assert.assertTrue(isAddFirstBabyVisible || isHomePageVisible, "Login did not redirect to expected page");
+        String errorText = pages.loginPage().getEmailErrorText();
+        Assert.assertTrue(errorText.length() > 0, "Email format error should be displayed");
+    }
 
-	}
+    @Test
+    public void loginWithEmptyPasswordShowsError() {
 
-	@Test
-	public void loginWithInvalidEmailShowsError() {
+        pages.loginPage().enterEmail(TestData.LOG_VALID_EMAIL);
+        pages.loginPage().enterPassword(TestData.LOG_EMPTY_PASSWORD);
+        pages.loginPage().clickEmailField();
+        driver.hideKeyboard();
 
-		loginPage.enterEmail("invalidEmail");
-		loginPage.enterPassword("Valid123");
+        String errorText = pages.loginPage().getPasswordErrorText();
+        Assert.assertTrue(errorText.length() > 0, "Password required error should be displayed");
+    }
 
-		Assert.assertTrue(loginPage.getEmailErrorText().length() > 0, "Email format error should be displayed");
-	}
+    @Test
+    public void loginButtonDisabledWhenFieldsAreInvalid() {
 
-	@Test
-	public void loginWithEmptyPasswordShowsError() {
+        pages.loginPage().enterEmail(TestData.LOG_INVALID_EMAIL_FORMAT);
+        pages.loginPage().enterPassword(TestData.LOG_EMPTY_PASSWORD);
+        driver.hideKeyboard();
 
-		loginPage.enterEmail("test@gmail.com");
-		loginPage.enterPassword("");
-		loginPage.clickEmailField();
-		driver.hideKeyboard();
+        Assert.assertFalse(pages.loginPage().isLoginButtonEnabled(), "Login button should be disabled when inputs are invalid");
+    }
 
-		Assert.assertTrue(loginPage.getPasswordErrorText().length() > 0, "Password required error should be displayed");
-	}
+    // Uygulama yanlış şifre için özel bir hata mesajı göstermediği için bu test bilinçli olarak fail olmaktadır.
+    @Test
+    public void loginWithWrongPasswordShowsError() {
 
-	@Test
-	public void loginButtonDisabledWhenFieldsAreInvalid() {
+        pages.loginPage().enterEmail(TestData.LOG_VALID_EMAIL);
+        pages.loginPage().enterPassword(TestData.LOG_WRONG_PASSWORD);
+        driver.hideKeyboard();
+        pages.loginPage().clickLogin();
 
-		loginPage.enterEmail("invalidemail");
-		loginPage.enterPassword("");
-		driver.hideKeyboard();
+        String errorText = pages.loginPage().getPasswordErrorText();
+        Assert.assertTrue(errorText.contains("hatalı"), "Wrong password error message should be displayed");
+    }
 
-		Assert.assertFalse(loginPage.isLoginButtonEnabled(), "Login button should be disabled when inputs are invalid");
-	}
+    @Test
+    public void visibilityPasswordWhenClickVisibilityPasswordIcon() {
 
-	@Test
-	public void loginWithWrongPasswordShowsError() {
+        String password = TestData.LOG_VALID_PASSWORD;
+        pages.loginPage().enterPassword(password);
+        driver.hideKeyboard();
 
-		loginPage.enterEmail("validuser@gmail.com");
-		loginPage.enterPassword("Wrong123");
-		driver.hideKeyboard();
-		loginPage.clickLogin();
+        String initialText = pages.loginPage().getPasswordText();
+        Assert.assertNotEquals(initialText, password);
 
-		String errorText = loginPage.getPasswordErrorText();
+        pages.loginPage().clickPasswordVisibility();
 
-		Assert.assertTrue(errorText.contains("hatalı"), "Wrong password error message should be displayed");
-	}
+        String visibleText = pages.loginPage().getPasswordText();
+        Assert.assertEquals(visibleText, password);
 
-	@Test
-	public void visibilityPasswordWhenClickVisibilityPasswordIcon() {
+        pages.loginPage().clickPasswordVisibility();
+        Assert.assertNotEquals(initialText, password);
+    }
 
-		String password = "Valid123";
-		loginPage.enterPassword(password);
-		driver.hideKeyboard();
+    @Test
+    public void forgotPasswordRedirectToForgotPasswordPage() {
 
-		String initialText = loginPage.getPasswordText();
-		Assert.assertNotEquals(initialText, password);
+        pages.loginPage().clickForgotPassword();
 
-		loginPage.clickPasswordVisibility();
+        Assert.assertTrue(pages.forgotPasswordPage().isDisplayedForgotPasswordTitle(),
+                "Login did not redirect to Forgot Password page");
+    }
 
-		String visibleText = loginPage.getPasswordText();
-		Assert.assertEquals(visibleText, password);
+    @Test
+    public void goToSignUpPageWhenClickGoToSignUpText() {
 
-		loginPage.clickPasswordVisibility();
-		Assert.assertNotEquals(initialText, password);
-	}
+        pages.loginPage().clickGoToSignUpButton();
 
-	@Test
-	public void forgotPaswordRedirectToForgotPasswordPage() {
-
-		loginPage.clickForgotPassword();
-
-		ForgotPasswordPage forgotPasswordPage = new ForgotPasswordPage(driver);
-
-		Assert.assertTrue(forgotPasswordPage.isDisplayedForgotPasswordTitle(),
-				"Login did not redirect to Forgot Password page");
-	}
-
-	@Test
-	public void goToSignUpPageWhenClickGoToSignUpText() {
-
-		loginPage.clickGoToSignUpButton();
-
-		RegisterPage registerPage = new RegisterPage(driver);
-
-		Assert.assertTrue(registerPage.isDisplayed(), "Login did not redirect to Register page");
-	}
+        Assert.assertTrue(pages.registerPage().isDisplayed(), "Login did not redirect to Register page");
+    }
 }

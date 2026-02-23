@@ -1,21 +1,16 @@
 package pages;
 
-import java.time.Duration;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
+import base.BasePage;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 
-public class AddFirstBabyPage {
-	private AndroidDriver driver;
-	private WebDriverWait wait;
+public class AddFirstBabyPage extends BasePage{
 
 	public AddFirstBabyPage(AndroidDriver driver) {
-		this.driver = driver;
-		this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+		super(driver);
 		System.out.println("FirstAddBabyPage initialized");
 	}
 
@@ -92,12 +87,16 @@ public class AddFirstBabyPage {
 
 	public void fillBabyForm(String name, String birthDate, String gender) {
 		enterBabyName(name);
+		driver.hideKeyboard();
 		enterBirthDate(birthDate);
+		driver.hideKeyboard();
 
 		if (gender.equalsIgnoreCase("girl")) {
 			selectGirl();
 		} else {
 			selectBoy();
 		}
+		
+		selectRelationship("anne");
 	}
 }

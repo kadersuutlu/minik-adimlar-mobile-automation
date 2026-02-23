@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testng.SkipException;
 
+import data.TestData;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
 import pages.HomePage;
@@ -15,6 +16,7 @@ import pages.LoginPage;
 public class BaseTest {
 
 	protected AndroidDriver driver;
+	protected PageManager pages;
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -47,23 +49,8 @@ public class BaseTest {
 		driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), realDeviceOptions);
 
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-	}
-
-	protected HomePage loginAsValidUser() {
-
-	    AppFlowManager flow = new AppFlowManager(driver);
-	    flow.goToLogin();
-
-	    LoginPage loginPage = new LoginPage(driver);
-	    loginPage.enterEmail("validuser3@gmail.com");
-	    loginPage.enterPassword("Valid1234");
-	    driver.hideKeyboard();
-	    loginPage.clickLogin();
-
-	    HomePage homePage = new HomePage(driver);
-	    homePage.waitForHomePage();
-
-	    return homePage;
+		
+		pages = new PageManager(driver);
 	}
 	
 	@AfterEach

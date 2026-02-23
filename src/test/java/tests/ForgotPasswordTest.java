@@ -9,103 +9,91 @@ import com.google.common.collect.ImmutableMap;
 import api.ForgotPasswordApi;
 import base.AppFlowManager;
 import base.BaseTest;
-import pages.AddFirstBabyPage;
-import pages.ForgotPasswordPage;
-import pages.HomePage;
-import pages.LoginPage;
+import data.TestData;
 
 public class ForgotPasswordTest extends BaseTest {
 
-	private LoginPage loginPage;
-	private ForgotPasswordPage forgotPasswordPage;
-	private AddFirstBabyPage addFirstBabyPage;
-	private HomePage homePage;
-
 	@BeforeEach
 	public void setup() {
-
 		AppFlowManager flow = new AppFlowManager(driver);
 		flow.goToLogin();
 
-		loginPage = new LoginPage(driver);
-		forgotPasswordPage = new ForgotPasswordPage(driver);
+		pages.loginPage().clickForgotPassword();
 
-		loginPage.clickForgotPassword();
-
-		Assert.assertTrue(forgotPasswordPage.isDisplayedForgotPasswordTitle(),
+		Assert.assertTrue(pages.forgotPasswordPage().isDisplayedForgotPasswordTitle(),
 				"Login did not redirect to Forgot Password page");
 	}
 
 	@Test
 	public void succesfullRedirectToSentEmailPage() {
 
-		forgotPasswordPage.enterEmail("validuser@gmail.com");
+		pages.forgotPasswordPage().enterEmail(TestData.FP_VALID_EMAIL);
+		pages.forgotPasswordPage().clickSendEmailButton();
 
-		forgotPasswordPage.clickSendEmailButton();
-
-		Assert.assertTrue(forgotPasswordPage.isDisplayedSentEmailTitle(),
+		Assert.assertTrue(pages.forgotPasswordPage().isDisplayedSentEmailTitle(),
 				"Forgot Password did not redirect to Sent Email page");
 	}
 
 	@Test
 	public void errorEmailFormat() {
-		forgotPasswordPage.enterEmail("validuser");
 
-		Assert.assertFalse(forgotPasswordPage.isSentEmailButtonEnabled(),
-				"Sent Email button should be disabled when inputs are invalid");
+		pages.forgotPasswordPage().enterEmail(TestData.FP_INVALID_EMAIL);
+
+		Assert.assertFalse(pages.forgotPasswordPage().isSentEmailButtonEnabled(),
+				"Send Email button should be disabled when inputs are invalid");
 	}
 
 	@Test
 	public void succesfullRedirectToLoginPageWhenClickGoToLoginButtonOnSentEmailPage() {
 
-		forgotPasswordPage.enterEmail("validuser@gmail.com");
+		pages.forgotPasswordPage().enterEmail(TestData.FP_VALID_EMAIL);
+		pages.forgotPasswordPage().clickSendEmailButton();
+		pages.forgotPasswordPage().clickResetLinkSentButton();
 
-		forgotPasswordPage.clickSendEmailButton();
-
-		forgotPasswordPage.clickResetLinkSentButton();
-
-		
-		Assert.assertTrue(loginPage.isDisplayed(), "Sent Email Page did not redirect to Login page");
-	}
-
-	@Test
-	public void successfulResetPasswordFlow() {
-
-		String email = "validuser@gmail.com";
-
-	    forgotPasswordPage.enterEmail(email);
-	    forgotPasswordPage.clickSendEmailButton();
-
-	    Assert.assertTrue(forgotPasswordPage.isDisplayedSentEmailTitle(),
-				"Forgot Password did not redirect to Sent Email page");
-	    
-	    // API’den token al
-	    String token = ForgotPasswordApi.getResetToken(email);
-
-	    // Deep link ile reset password ekranını aç
-	    driver.executeScript("mobile: deepLink", ImmutableMap.of(
-	            "url", "minikadimlar://reset-password?token=" + token,
-	            "package", "com.juniors.minikadimlar"
-	    ));
-
-	    Assert.assertTrue(forgotPasswordPage.isDisplayedCreateNewPasswordTitle());
-
-	    forgotPasswordPage.createNewPassword("NewPass123!");
-
-	    Assert.assertTrue(loginPage.isDisplayed());
-
-	    loginPage.fillLoginForm("validuser@gmail.com", "NewPass123!");	    
-	    driver.hideKeyboard();
-		loginPage.clickLogin();
-
-		addFirstBabyPage = new AddFirstBabyPage(driver);
-		homePage = new HomePage(driver);
-
-		boolean isAddFirstBabyVisible = addFirstBabyPage.isDisplayed();
-		boolean isHomePageVisible = homePage.isDisplayed();
-
-		Assert.assertTrue(isAddFirstBabyVisible || isHomePageVisible, "Login did not redirect to expected page");
+		Assert.assertTrue(pages.loginPage().isDisplayed(), "Sent Email Page did not redirect to Login page");
 	}
 
 	
+	//FAIL
+	@Test
+	public void successfulResetPasswordFlow() {
+
+		String email = TestData.FP_VALID_EMAIL;
+
+		// Send reset email
+		pages.forgotPasswordPage().enterEmail(email);
+		pages.forgotPasswordPage().clickSendEmailButton();
+
+		Assert.assertTrue(pages.forgotPasswordPage().isDisplayedSentEmailTitle(),
+				"Forgot Password did not redirect to Sent Email page");
+
+		// Token API’den al
+		String token = ForgotPasswordApi.getResetToken(email);
+
+		// Deep link ile reset password ekranını aç
+		driver.executeScript("mobile: deepLink", ImmutableMap.of("url", "minikadimlar://reset-password?token=" + token,
+				"package", "com.juniors.minikadimlar"));
+		
+		//Uygulamaya Git butonuna tıkla
+		pages.forgotPasswordPage().clickGoToAppButton();
+
+		Assert.assertTrue(pages.forgotPasswordPage().isDisplayedCreateNewPasswordTitle());
+
+		// TestData’daki yeni şifreyi kullan
+		pages.forgotPasswordPage().createNewPassword(TestData.FP_NEW_PASSWORD);
+
+		// Login sayfasına yönlendirildiğini doğrula
+		Assert.assertTrue(pages.loginPage().isDisplayed());
+
+		// Yeni şifre ile login ol
+		pages.loginPage().fillLoginForm(TestData.FP_VALID_EMAIL, TestData.FP_NEW_PASSWORD);
+		driver.hideKeyboard();
+		pages.loginPage().clickLogin();
+
+		boolean isAddFirstBabyVisible = pages.addFirstBabyPage().isDisplayed();
+		boolean isHomePageVisible = pages.homePage().isDisplayed();
+
+		Assert.assertTrue(isAddFirstBabyVisible || isHomePageVisible,
+				"Login did not redirect to expected page after password reset");
+	}
 }

@@ -7,37 +7,30 @@ import org.testng.Assert;
 import api.ContentApi;
 import base.AppFlowManager;
 import base.BaseTest;
-import pages.ContentsPage;
-import pages.HomePage;
-import pages.LoginPage;
-import pages.NotificationPage;
-import pages.ReadingListPage;
+import data.TestData;
 
 public class ContentsTest extends BaseTest {
 
-	private ContentsPage contentsPage;
-	private LoginPage loginPage;
-	private HomePage homePage;
-	private NotificationPage notificationPage;
-	private ReadingListPage readingListPage;
 
 	@BeforeEach
 	public void setUpPage() {
+		
+		AppFlowManager flow = new AppFlowManager(driver);
+        flow.goToLogin();
+        pages.loginPage().fillLoginForm(TestData.LOG_VALID_EMAIL, TestData.FP_NEW_PASSWORD);
+        driver.hideKeyboard();
+        pages.loginPage().clickLogin();
 
-	    homePage = loginAsValidUser();
+	    pages.homePage().clickNavigationContents();
 
-	    homePage.clickNavigationContents();
-
-	    contentsPage = new ContentsPage(driver);
-	    contentsPage.waitForContentsPage();
 	}
 
 	@Test
 	public void babyContentShouldMatchApi() {
 
-		contentsPage.clickBabyContentsTab();
+		pages.contentsPage().clickBabyContentsTab();
 
-		String uiTitle = contentsPage.getFirstContentTitle();
+		String uiTitle = pages.contentsPage().getFirstContentTitle();
 
 		String apiTitle = ContentApi.getFirstContentTitleByAudience("BABY");
 
@@ -47,9 +40,9 @@ public class ContentsTest extends BaseTest {
 	@Test
 	public void parentContentsShouldMatchApi() {
 
-		contentsPage.clickParentContentsTab();
+		pages.contentsPage().clickParentContentsTab();
 
-		String uiTitle = contentsPage.getFirstContentTitle();
+		String uiTitle = pages.contentsPage().getFirstContentTitle();
 
 		String apiTitle = ContentApi.getFirstContentTitleByAudience("PARENT");
 
@@ -57,22 +50,55 @@ public class ContentsTest extends BaseTest {
 	}
 
 	@Test
+	public void switchingTabsShouldChangeContentList() {
+
+		pages.contentsPage().clickBabyContentsTab();
+	    String babyTitle = pages.contentsPage().getFirstContentTitle();
+
+	    pages.contentsPage().clickParentContentsTab();
+	    String parentTitle = pages.contentsPage().getFirstContentTitle();
+
+	    Assert.assertNotEquals(babyTitle, parentTitle,
+	            "Content list did not change after switching tabs");
+	}
+	
+	@Test
+	public void searchShouldFilterContents() {
+
+		pages.contentsPage().enterSearchInput("uyku");
+
+	    String firstTitle = pages.contentsPage().getFirstContentTitle();
+
+	    Assert.assertTrue(firstTitle.toLowerCase().contains("uyku"),
+	            "Search did not filter content correctly");
+	}
+	
+	@Test
+	public void shouldAddContentToReadingList() {
+
+	    String title = pages.contentsPage().getFirstContentTitle();
+
+	    pages.contentsPage().clickContentListAddReadingListIcon();
+	    pages.contentsPage().clickContentListReadingListIcon();
+
+
+	    Assert.assertTrue(pages.readingListPage().isContentPresent(title),
+	            "Content was not added to reading list");
+	}
+	
+	@Test
 	public void shouldOpenNotificationPageWhenClickNotificationIcon() {
 
-		contentsPage.clickContentListNotificationIcon();
+		pages.contentsPage().clickContentListNotificationIcon();
 
-		notificationPage = new NotificationPage(driver);
-
-		Assert.assertTrue(notificationPage.isDisplayed(), "contents page did not redirect to notification page");
+		Assert.assertTrue(pages.notificationPage().isDisplayed(), "contents page did not redirect to notification page");
 	}
 
 	@Test
 	public void shouldOpenReadingListPageWhenClickReadingListIcon() {
 
-		contentsPage.clickContentListReadingListIcon();
+		pages.contentsPage().clickContentListReadingListIcon();
 
-		readingListPage = new ReadingListPage(driver);
-
-		Assert.assertTrue(readingListPage.isDisplayed(), "Reading page did not redirect to notification page");
+		Assert.assertTrue(pages.readingListPage().isDisplayed(), "Reading page did not redirect to notification page");
 	}
 }

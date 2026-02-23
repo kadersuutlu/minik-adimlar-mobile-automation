@@ -1,23 +1,16 @@
 package pages;
 
-import java.time.Duration;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
+import base.BasePage;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.functions.ExpectedCondition;
 
-public class ContentsPage {
-
-	private AndroidDriver driver;
-	private WebDriverWait wait;
+public class ContentsPage extends BasePage{
 
 	public ContentsPage(AndroidDriver driver) {
-		this.driver = driver;
-		this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+		super(driver);
 		System.out.println("ContentsForBabyListPage initialized");
 	}
 
