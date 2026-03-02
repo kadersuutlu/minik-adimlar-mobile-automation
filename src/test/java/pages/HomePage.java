@@ -16,6 +16,8 @@ public class HomePage extends BasePage {
 
 	By homeHeader = AppiumBy.accessibilityId("home_baby_feeling_card");
 	
+	By profileIcon = By.xpath("//com.horcrux.svg.RectView[2]");
+	
 	private By homeBabyFeelingCard=AppiumBy.accessibilityId("Bebeğiniz Bugün Nasıl?");
 	
 	private By homeNotificationId=AppiumBy.accessibilityId("home_notification_icon");
@@ -37,6 +39,10 @@ public class HomePage extends BasePage {
 	
 	public void waitForHomePage() {
 	    wait.until(ExpectedConditions.visibilityOfElementLocated(homeHeader));
+	}
+	
+	public void clickProfileIcon() {
+		wait.until(ExpectedConditions.elementToBeClickable(profileIcon)).click();
 	}
 	
 	public void clickHomeBabyFeelingCard() {

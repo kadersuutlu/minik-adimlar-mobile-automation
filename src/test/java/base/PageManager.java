@@ -3,17 +3,23 @@ package base;
 import io.appium.java_client.android.AndroidDriver;
 import pages.AddBabyPage;
 import pages.AddFirstBabyPage;
+import pages.ChangePasswordPage;
 import pages.ContentsPage;
 import pages.ForgotPasswordPage;
 import pages.HomePage;
 import pages.LoginPage;
+import pages.MyBabiesPage;
 import pages.MyBabyPage;
 import pages.NotificationPage;
 import pages.OnboardingFirstPage;
 import pages.OnboardingSecondPage;
+import pages.PersonalInfoPage;
+import pages.PrivacyPolicyPage;
+import pages.ProfilePage;
 import pages.ReadingListPage;
 import pages.RegisterPage;
 import pages.ScedulePage;
+import pages.UserAgreementPage;
 
 public class PageManager {
 	private AndroidDriver driver;
@@ -31,6 +37,12 @@ public class PageManager {
     private ReadingListPage readingListPage;
     private OnboardingFirstPage firstPage;
     private OnboardingSecondPage secondPage;
+    private ProfilePage profilePage;
+    private PersonalInfoPage personalInfoPage;
+    private MyBabiesPage myBabiesPage;
+    private ChangePasswordPage changePasswordPage;
+    private UserAgreementPage userAgreementPage;
+    private PrivacyPolicyPage privacyPolicyPage;
 
     public PageManager(AndroidDriver driver) {
         this.driver = driver;
@@ -125,5 +137,47 @@ public class PageManager {
         	secondPage = new OnboardingSecondPage(driver);
         }
         return secondPage;
+    }
+    
+    public ProfilePage profilePage() {
+        if (profilePage == null) {
+        	profilePage = new ProfilePage(driver);
+        }
+        return profilePage;
+    }
+    
+    public PersonalInfoPage personalInfoPage() {
+        if (personalInfoPage == null) {
+        	personalInfoPage = new PersonalInfoPage(driver);
+        }
+        return personalInfoPage;
+    }
+    
+    public MyBabiesPage myBabiesPage() {
+        if (myBabiesPage == null) {
+        	myBabiesPage = new MyBabiesPage(driver);
+        }
+        return myBabiesPage;
+    }
+    
+    public ChangePasswordPage changePasswordPage() {
+        if (changePasswordPage == null) {
+        	changePasswordPage = new ChangePasswordPage(driver);
+        }
+        return changePasswordPage;
+    }
+    
+    public UserAgreementPage userAgreementPage() {
+        if (userAgreementPage == null) {
+        	userAgreementPage = new UserAgreementPage(driver);
+        }
+        return userAgreementPage;
+    }
+    
+    public PrivacyPolicyPage privacyPolicyPage() {
+        if (privacyPolicyPage == null) {
+        	privacyPolicyPage = new PrivacyPolicyPage(driver);
+        }
+        return privacyPolicyPage;
     }
 }
