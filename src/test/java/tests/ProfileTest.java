@@ -15,7 +15,7 @@ public class ProfileTest extends BaseTest{
 		
 		AppFlowManager flow = new AppFlowManager(driver);
         flow.goToLogin();
-        pages.loginPage().fillLoginForm("validuser33@gmail.com", "Valid1234");
+        pages.loginPage().fillLoginForm("yeniemail2@test.com", "Valid1234");
         driver.hideKeyboard();
         pages.loginPage().clickLogin();
 
@@ -55,6 +55,26 @@ public class ProfileTest extends BaseTest{
     void shouldNavigateToChangePasswordPage() {
         pages.profilePage().clickProfileChangePasswordButton();
         assertTrue(pages.changePasswordPage().isDisplayed());
+    }
+    
+    @Test
+    void shouldNavigateToLoginPageWhenConfirmLogout() {
+        pages.profilePage().clickProfileLogOutButton();
+        
+        assertTrue(pages.profilePage().getLogOutConfirmTitle(), "Logout onay pop-up'ı görüntülenemedi!");
+        
+        pages.profilePage().clickLogOutConfirmLogOutButton();
+        
+        assertTrue(pages.secondPage().isWelcomeToAppDisplayed(), "Logout sonrası Login sayfası açılmadı!");
+    }
+    
+    @Test
+    void shouldStayOnProfilePageWhenCancelLogout() {
+        pages.profilePage().clickProfileLogOutButton();
+        
+        pages.profilePage().clickLogOutConfirmCancelButton();
+        
+        assertTrue(pages.profilePage().isDisplayed(), "Logout iptal edilmesine rağmen Profile sayfasından çıkıldı!");
     }
 
     @Test

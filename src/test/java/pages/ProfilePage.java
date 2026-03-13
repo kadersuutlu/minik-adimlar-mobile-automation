@@ -23,9 +23,25 @@ public class ProfilePage extends BasePage {
 	private By profileLogOutButton = AppiumBy.accessibilityId("profile_logout_button");
 	private By profileUserAgreementText = AppiumBy.accessibilityId("profile_user_agreement_text");
 	private By profilePrivacyPolicyText = AppiumBy.accessibilityId("profile_privacy_policy_text");
+	
+	private By logOutConfirmTitle=AppiumBy.accessibilityId("logout_confirm_title");
+	private By logOutConfirmLogOutButton=AppiumBy.accessibilityId("logout_confirm_logout_button");
+	private By logOutConfirmCancelButton=AppiumBy.accessibilityId("logout_confirm_cancel_button");
 
 	public boolean isDisplayed() {
 		return driver.findElements(profileTitle).size() > 0;
+	}
+	
+	public boolean getLogOutConfirmTitle() {
+		return driver.findElements(logOutConfirmTitle).size() > 0;
+	}
+	
+	public void clickLogOutConfirmLogOutButton() {
+		wait.until(ExpectedConditions.elementToBeClickable(logOutConfirmLogOutButton)).click();
+	}
+	
+	public void clickLogOutConfirmCancelButton() {
+		wait.until(ExpectedConditions.elementToBeClickable(logOutConfirmCancelButton)).click();
 	}
 
 	public void clickProfilePersonalInfoButton() {

@@ -14,7 +14,12 @@ public class OnboardingSecondPage extends BasePage{
 
 	private By registerButton = AppiumBy.accessibilityId("auth_choice_signup_button");
 	private By loginButton = AppiumBy.accessibilityId("auth_choice_signin_button");
+	private By welcomeToApp = By.xpath("//android.widget.TextView[@text=\"Bebeğiniz büyürken, biz de sizin yol arkadaşınız olalım\"]");
 
+	public boolean isWelcomeToAppDisplayed() {
+		return driver.findElement(registerButton).isDisplayed();
+	}
+	
 	public boolean isRegisterButtonDisplayed() {
 		return driver.findElement(registerButton).isDisplayed();
 	}
