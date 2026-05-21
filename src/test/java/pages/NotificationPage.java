@@ -10,7 +10,7 @@ public class NotificationPage extends BasePage{
 
 	public NotificationPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("NotificationPage initialized");
+		System.out.println("Bildirimler initialized");
 	}
 
 	By notificationHeader = By.xpath("//android.widget.TextView[@text='Bildirimler']");

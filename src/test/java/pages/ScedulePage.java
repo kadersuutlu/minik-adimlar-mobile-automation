@@ -10,7 +10,7 @@ public class ScedulePage extends BasePage{
 	
 	public ScedulePage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("NotificationPage initialized");
+		System.out.println("Takvim initialized");
 	}
 
 	By scedulePageHeader = By.xpath("//android.widget.TextView[@text='Takvim']");
