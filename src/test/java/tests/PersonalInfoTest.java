@@ -1,5 +1,7 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
@@ -13,10 +15,10 @@ public class PersonalInfoTest extends BaseTest {
 	public void setUpPage() {
 
 		AppFlowManager flow = new AppFlowManager(driver);
-		flow.goToLogin();
-		pages.loginPage().fillLoginForm("yeniemail2@test.com", "Valid1234");
-		driver.hideKeyboard();
-		pages.loginPage().clickLogin();
+
+		flow.loginAndCleanStart("yeniemail2@test.com", "Valid1234");
+
+		assertTrue(pages.homePage().isDisplayed(), "Onboarding sonrası ana sayfa yüklenemedi!");
 
 		pages.homePage().clickProfileIcon();
 		pages.profilePage().clickProfilePersonalInfoButton();

@@ -11,7 +11,7 @@ public class ProfilePage extends BasePage {
 
 	public ProfilePage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("ProfilePage initialized");
+		System.out.println("Profil initialized");
 	}
 
 	By profileTitle = AppiumBy.accessibilityId("profile_title");

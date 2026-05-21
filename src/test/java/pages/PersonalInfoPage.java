@@ -11,7 +11,7 @@ public class PersonalInfoPage extends BasePage {
 
 	public PersonalInfoPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("PersonalInfoPage initialized");
+		System.out.println("Kişisel Bilgilerim initialized");
 	}
 
 	By personalInfoTitle = AppiumBy.accessibilityId("personal_info_title");

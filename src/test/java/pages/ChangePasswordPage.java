@@ -11,7 +11,7 @@ public class ChangePasswordPage extends BasePage {
 
 	public ChangePasswordPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("ChangePasswordPage initialized");
+		System.out.println("Şifre Değiştir initialized");
 	}
 
 	By changePasswordTitle = AppiumBy.accessibilityId("change_password_title");

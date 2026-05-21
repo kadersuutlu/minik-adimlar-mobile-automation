@@ -13,13 +13,12 @@ public class ProfileTest extends BaseTest{
 	@BeforeEach
 	public void setUpPage() {
 		
-		AppFlowManager flow = new AppFlowManager(driver);
-        flow.goToLogin();
-        pages.loginPage().fillLoginForm("yeniemail2@test.com", "Valid1234");
-        driver.hideKeyboard();
-        pages.loginPage().clickLogin();
+AppFlowManager flow = new AppFlowManager(driver);
+        
+        flow.loginAndCleanStart("yeniemail2@test.com", "Valid1234");
 
-	    pages.homePage().clickProfileIcon();
+        assertTrue(pages.homePage().isDisplayed(), "Onboarding sonrası ana sayfa yüklenemedi!");
+        pages.homePage().clickProfileIcon();
 
 	}
 	
