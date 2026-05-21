@@ -11,7 +11,7 @@ public class ContentsPage extends BasePage{
 
 	public ContentsPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("ContentsForBabyListPage initialized");
+		System.out.println("İçerikler initialized");
 	}
 
 	By contentsHeader = AppiumBy.accessibilityId("content_list_title");

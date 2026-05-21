@@ -10,7 +10,7 @@ public class PrivacyPolicyPage extends BasePage {
 
 	public PrivacyPolicyPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("PrivacyPolicyPage initialized");
+		System.out.println("Gizlilik Sözleşmesi initialized");
 	}
 
 	By privacyPolicyTitle = AppiumBy.accessibilityId("privacy_policy_title");

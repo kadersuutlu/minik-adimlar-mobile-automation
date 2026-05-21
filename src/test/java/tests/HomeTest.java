@@ -1,5 +1,7 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
@@ -15,10 +17,11 @@ public class HomeTest extends BaseTest {
 	public void setUpPage() {
 
 		AppFlowManager flow = new AppFlowManager(driver);
-        flow.goToLogin();
-        pages.loginPage().fillLoginForm(TestData.LOG_VALID_EMAIL, TestData.FP_NEW_PASSWORD);
-        driver.hideKeyboard();
-        pages.loginPage().clickLogin();
+
+		flow.loginAndCleanStart("yeniemail2@test.com", "Valid1234");
+
+		assertTrue(pages.homePage().isDisplayed(), "Onboarding sonrası ana sayfa yüklenemedi!");
+
 	}
 
 	@Test
@@ -56,7 +59,7 @@ public class HomeTest extends BaseTest {
 	@Test
 	public void notificationPageOpenWhenClickNotificationButton() {
 
-		pages.homePage().clickHomeNotificationId();
+		pages.homePage().clickHomeNotificationIcon();
 
 		Assert.assertTrue(pages.notificationPage().isDisplayed(), "home page did not redirect to notification page");
 	}
@@ -88,7 +91,7 @@ public class HomeTest extends BaseTest {
 	@Test
 	public void navigateToScedulePage() {
 
-		pages.homePage().clickNavigationScedule();
+		pages.homePage().clickNavigationSchedule();
 
 		Assert.assertTrue(pages.scedulePage().isDisplayed(), "home page did not redirect to scedule page");
 	}

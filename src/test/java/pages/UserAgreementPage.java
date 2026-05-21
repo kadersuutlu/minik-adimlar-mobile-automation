@@ -10,7 +10,7 @@ public class UserAgreementPage extends BasePage {
 
 	public UserAgreementPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("UserAgreementPage initialized");
+		System.out.println("Kullanıcı Sözleşmesi initialized");
 	}
 
 	By userAgreementPage = AppiumBy.accessibilityId("user_agreement_title");
