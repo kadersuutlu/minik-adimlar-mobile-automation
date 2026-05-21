@@ -11,6 +11,7 @@ public class ForgotPasswordPage extends BasePage{
 
 	public ForgotPasswordPage(AndroidDriver driver) {
 		super(driver);
+		System.out.println("Şifremi Unuttum initialized");
 	}
 
 	private By forgotPasswordTitle = AppiumBy.accessibilityId("forgot_password_title");

@@ -11,7 +11,7 @@ public class LoginPage extends BasePage{
 
 	public LoginPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("Login initialized");
+		System.out.println("Giriş Yap initialized");
 	}
 
 	By loginHeader = AppiumBy.accessibilityId("signin_title");

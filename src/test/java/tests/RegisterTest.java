@@ -1,16 +1,12 @@
 package tests;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.testng.Assert;
 
 import base.AppFlowManager;
 import base.BaseTest;
 import data.TestData;
-import io.appium.java_client.AppiumBy;
 
 public class RegisterTest extends BaseTest {
 
@@ -35,9 +31,7 @@ public class RegisterTest extends BaseTest {
         pages.registerPage().acceptAgreements();
         pages.registerPage().clickRegister();
 
-        By loginTitle = AppiumBy.accessibilityId("signin_title");
-
-        Assert.assertTrue(driver.findElement(loginTitle).isDisplayed(),
+        Assert.assertTrue(pages.loginPage().isDisplayed(),
                 "User should be redirected to Login page after successful registration");
     }
 

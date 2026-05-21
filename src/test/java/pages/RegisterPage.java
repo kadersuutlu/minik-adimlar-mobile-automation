@@ -12,7 +12,7 @@ public class RegisterPage extends BasePage{
 
 	public RegisterPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("RegisterPage initialized");
+		System.out.println("Kayıt Ol initialized");
 	}
 
 	By registerHeader = AppiumBy.accessibilityId("signup_title");
