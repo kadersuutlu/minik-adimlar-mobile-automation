@@ -1,14 +1,16 @@
 package tests;
 
 import org.junit.jupiter.api.Test;
+import org.testng.annotations.BeforeMethod;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import base.BaseTest;
 
 public class OnboardingTest extends BaseTest {
-
-	@Test
-	public void shouldDisplayFirstOnboardingPage() {
-		assertTrue(pages.firstPage().isContinueButtonDisplayed(), "Onboarding First Page is not displayed");
+	
+	@BeforeMethod
+	public void setup() {
+		assertTrue(pages.firstPage().isContinueButtonDisplayed(),"Onboarding First Page is not displayed");
 	}
 
 	@Test

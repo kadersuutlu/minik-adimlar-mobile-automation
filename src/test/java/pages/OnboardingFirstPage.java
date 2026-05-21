@@ -11,6 +11,7 @@ public class OnboardingFirstPage extends BasePage{
 	
 	public OnboardingFirstPage(AndroidDriver driver) {
 		super(driver);
+		System.out.println("Onboarding 1 initialized");
 	}
 
 	private By continueButton = AppiumBy.accessibilityId("welcome_continue_button");
