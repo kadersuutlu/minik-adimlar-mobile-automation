@@ -10,7 +10,7 @@ public class AddBabyPage extends BasePage{
 
 	public AddBabyPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("AddBabyPage initialized");
+		System.out.println("Bebek Ekle initialized");
 	}
 
 	By babyModalTitle = AppiumBy.accessibilityId("baby_modal_title");

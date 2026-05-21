@@ -11,7 +11,7 @@ public class AddFirstBabyPage extends BasePage{
 
 	public AddFirstBabyPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("FirstAddBabyPage initialized");
+		System.out.println("İlk Bebeğini Ekle initialized");
 	}
 
 	By addBabyTitle = AppiumBy.accessibilityId("add_baby_title");
@@ -36,7 +36,7 @@ public class AddFirstBabyPage extends BasePage{
 	private By babySubmitButton = AppiumBy.accessibilityId("add_baby_submit_button");
 
 	public boolean isDisplayed() {
-		return driver.findElements(addBabyTitle).size() > 0;
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(addBabyTitle)).isDisplayed();
 	}
 
 	public void enterBabyName(String name) {

@@ -14,6 +14,8 @@ public class AddFirstBabyTest extends BaseTest {
     public void setUpPage() {
     	AppFlowManager flow = new AppFlowManager(driver);
         flow.goToLogin();
+        //Eklenen bebek veritababnına da eklendği için ikinci testte bebek var olduğu için anasayfaya gidiyor
+       
         pages.loginPage().fillLoginForm(TestData.LOG_VALID_EMAIL, TestData.FP_NEW_PASSWORD);
         driver.hideKeyboard();
         pages.loginPage().clickLogin();
