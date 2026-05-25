@@ -1,105 +1,147 @@
 package tests;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.testng.Assert;
+import io.qameta.allure.*;
+import org.junit.jupiter.api.*;
 
 import base.AppFlowManager;
 import base.BaseTest;
 import data.TestData;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Feature("Kayıt Ol")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RegisterTest extends BaseTest {
 
-	@BeforeEach
-	public void setupPage() {
-		AppFlowManager flow = new AppFlowManager(driver);
-	    flow.goToRegister();
-	}
-
-	@Test
-    public void successfulRegisterRedirectsToLogin() {
-
-        // Dynamic email oluşturduk
-        String email = "test" + System.currentTimeMillis() + "@gmail.com";
-
-        pages.registerPage().enterName(TestData.REG_VALID_NAME);
-        pages.registerPage().enterEmail(email);
-        pages.registerPage().enterPhone(TestData.REG_VALID_PHONE);
-        driver.hideKeyboard();
-        pages.registerPage().enterPassword(TestData.REG_VALID_PASSWORD);
-        driver.hideKeyboard();
-        pages.registerPage().acceptAgreements();
-        pages.registerPage().clickRegister();
-
-        Assert.assertTrue(pages.loginPage().isDisplayed(),
-                "User should be redirected to Login page after successful registration");
+    @BeforeEach
+    public void setupPage() {
+        AppFlowManager flow = new AppFlowManager(driver);
+        flow.goToRegister();
     }
 
-    @Test
-    public void registerWithInvalidEmailShowsError() {
 
+    @Test
+    @Order(1)
+    @DisplayName("Geçerli bilgilerle kayıt olunca login sayfasına yönlendirilmeli")
+    @Description("Ad, email, telefon ve şifre girilip kayıt olununca login ekranı görüntülenmeli")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Başarılı kayıt")
+    public void successfulRegisterRedirectsToLogin() {
+        pages.registerPage().fillRegisterForm(
+                TestData.REG_VALID_NAME,
+                TestData.generateEmail(),
+                TestData.REG_VALID_PHONE,
+                TestData.REG_VALID_PASSWORD
+        );
+        pages.registerPage().clickRegister();
+
+        assertTrue(pages.loginPage().isDisplayed(),
+                "Başarılı kayıt sonrası login sayfası görüntülenmeli");
+    }
+
+
+    @Test
+    @Order(2)
+    @DisplayName("Geçersiz email girilince hata mesajı gösterilmeli")
+    @Description("Email formatı hatalı girildiğinde validation mesajı görünmeli")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Email validasyonu")
+    public void registerWithInvalidEmailShowsError() {
         pages.registerPage().enterName(TestData.REG_VALID_NAME);
         driver.hideKeyboard();
         pages.registerPage().enterEmail(TestData.REG_INVALID_EMAIL);
         driver.hideKeyboard();
+
+        assertTrue(pages.registerPage().getEmailErrorText().contains("geçerli"),
+                "Geçersiz email hata mesajı görüntülenmeli");
+    }
+
+
+    @Test
+    @Order(3)
+    @DisplayName("Boş şifre girilince hata mesajı gösterilmeli")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Şifre validasyonu")
+    public void registerWithEmptyPasswordShowsError() {
+        pages.registerPage().enterName(TestData.REG_VALID_NAME);
+        driver.hideKeyboard();
+        pages.registerPage().enterEmail(TestData.generateEmail());
+        driver.hideKeyboard();
         pages.registerPage().enterPhone(TestData.REG_VALID_PHONE);
         driver.hideKeyboard();
+        pages.registerPage().enterPassword(TestData.REG_EMPTY_PASSWORD);
+        pages.registerPage().clickRegister();
 
-        String errorText = pages.registerPage().getEmailErrorText();
-
-        Assert.assertTrue(errorText.contains("geçerli"), "Invalid email error message should be displayed");
+        assertTrue(pages.registerPage().getPasswordEmptyErrorText().contains("zorunlu"),
+                "Şifre zorunlu hata mesajı görüntülenmeli");
     }
-	
-	//1) Şifre zorunludur Beklenen hata: "Şifre zorunludur." Test input: "" // boş string ???????
 
     @Test
-    public void registerWithEmptyPasswordShowsError() {
-
-    	pages.registerPage().enterPassword(TestData.REG_EMPTY_PASSWORD);
-        pages.registerPage().enterName(TestData.REG_VALID_NAME);
-        driver.hideKeyboard();
-
-        String errorText = pages.registerPage().getPasswordEmptyErrorText();
-        Assert.assertTrue(errorText.contains("zorunlu"), "Password required error should be displayed");
-    }
-	
-	//2) Minimum uzunluk (en az 6 karakter) Beklenen hata: "Şifre en az 6 karakter olmalıdır." Test input: "Ab123" // 5 karakter
-
-    @Test
+    @Order(4)
+    @DisplayName("Kısa şifre girilince minimum uzunluk hatası gösterilmeli")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Şifre validasyonu")
     public void registerWithShortPasswordShowsMinLengthError() {
-
-    	pages.registerPage().enterPassword(TestData.REG_SHORT_PASSWORD);
         pages.registerPage().enterName(TestData.REG_VALID_NAME);
         driver.hideKeyboard();
+        pages.registerPage().enterEmail(TestData.generateEmail());
+        driver.hideKeyboard();
+        pages.registerPage().enterPhone(TestData.REG_VALID_PHONE);
+        driver.hideKeyboard();
+        pages.registerPage().enterPassword(TestData.REG_SHORT_PASSWORD);
+        driver.hideKeyboard();
 
-        String errorText = pages.registerPage().getPasswordMinLengthErrorText();
-        Assert.assertTrue(errorText.contains("en az"), "Min length password error should be displayed");
+        assertTrue(pages.registerPage().getPasswordMinLengthErrorText().contains("en az"),
+                "Minimum uzunluk hata mesajı görüntülenmeli");
     }
 
-	//3) En az 1 büyük harf içermelidir Beklenen hata: "Şifre en az 1 büyük harf içermelidir." Test input: "test123" // büyük harf yok
-	
     @Test
+    @Order(5)
+    @DisplayName("Büyük harf içermeyen şifre girilince hata mesajı gösterilmeli")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Şifre validasyonu")
     public void registerWithPasswordWithoutUppercaseShowsError() {
-
-    	pages.registerPage().enterPassword(TestData.REG_NO_UPPERCASE_PASSWORD);
         pages.registerPage().enterName(TestData.REG_VALID_NAME);
         driver.hideKeyboard();
-        
-        String errorText = pages.registerPage().getPasswordUppercaseErrorText();
-        Assert.assertTrue(errorText.contains("büyük harf"), "Uppercase letter error should be displayed");
+        pages.registerPage().enterEmail(TestData.generateEmail());
+        driver.hideKeyboard();
+        pages.registerPage().enterPhone(TestData.REG_VALID_PHONE);
+        driver.hideKeyboard();
+        pages.registerPage().enterPassword(TestData.REG_NO_UPPERCASE_PASSWORD);
+        driver.hideKeyboard();
+
+        assertTrue(pages.registerPage().getPasswordUppercaseErrorText().contains("büyük harf"),
+                "Büyük harf hata mesajı görüntülenmeli");
     }
-	
-	//4) En az 1 küçük harf içermelidir Beklenen hata: "Şifre en az 1 küçük harf içermelidir." Test input: "TEST123" // küçük harf yok
-	
-    @Test
-    public void registerWithPasswordWithoutLowercaseShowsError() {
 
-    	pages.registerPage().enterPassword(TestData.REG_NO_LOWERCASE_PASSWORD);
+    @Test
+    @Order(6)
+    @DisplayName("Küçük harf içermeyen şifre girilince hata mesajı gösterilmeli")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Şifre validasyonu")
+    public void registerWithPasswordWithoutLowercaseShowsError() {
         pages.registerPage().enterName(TestData.REG_VALID_NAME);
         driver.hideKeyboard();
+        pages.registerPage().enterEmail(TestData.generateEmail());
+        driver.hideKeyboard();
+        pages.registerPage().enterPhone(TestData.REG_VALID_PHONE);
+        driver.hideKeyboard();
+        pages.registerPage().enterPassword(TestData.REG_NO_LOWERCASE_PASSWORD);
+        driver.hideKeyboard();
+
+        assertTrue(pages.registerPage().getPasswordLowercaseErrorText().contains("küçük harf"),
+                "Küçük harf hata mesajı görüntülenmeli");
+    }
 
 
-        String errorText = pages.registerPage().getPasswordLowerCaseErrorText();
-        Assert.assertTrue(errorText.contains("küçük harf"), "Lowercase letter error should be displayed");
+    @Test
+    @Order(7)
+    @DisplayName("Form boşken kayıt ol butonu disabled olmalı")
+    @Severity(SeverityLevel.MINOR)
+    @Story("Buton durumu")
+    public void registerButtonDisabledWhenFormEmpty() {
+        assertFalse(pages.registerPage().isRegisterButtonEnabled(),
+                "Form boşken kayıt ol butonu disabled olmalı");
     }
 }

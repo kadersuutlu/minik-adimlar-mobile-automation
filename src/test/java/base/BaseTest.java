@@ -4,8 +4,8 @@ import java.net.URL;
 import java.time.Duration;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
-import org.testng.SkipException;
 
 import data.TestData;
 import io.appium.java_client.android.AndroidDriver;
@@ -41,10 +41,7 @@ public class BaseTest {
 				.setNoReset(false)
 				.setAndroidInstallTimeout(Duration.ofSeconds(10));
 
-		// Github Actions: CI
-		if (System.getenv("CI") != null) {
-			throw new SkipException("Skipping Appium tests in CI environment");
-		}
+        Assumptions.assumeTrue(System.getenv("CI") == null, "CI ortamında Appium testleri atlanıyor");
 
 		driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), realDeviceOptions);
 

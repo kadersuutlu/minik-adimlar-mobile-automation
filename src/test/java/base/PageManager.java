@@ -43,7 +43,6 @@ public class PageManager {
 	private ChangePasswordPage changePasswordPage;
 	private UserAgreementPage userAgreementPage;
 	private PrivacyPolicyPage privacyPolicyPage;
-	private MyBabiesEditPage myBabiesEditPage;
 
 	public PageManager(AndroidDriver driver) {
 		this.driver = driver;
@@ -180,12 +179,5 @@ public class PageManager {
 			privacyPolicyPage = new PrivacyPolicyPage(driver);
 		}
 		return privacyPolicyPage;
-	}
-
-	public MyBabiesEditPage myBabiesEditPage() {
-		if (myBabiesEditPage == null) {
-			myBabiesEditPage = new MyBabiesEditPage(driver);
-		}
-		return myBabiesEditPage;
 	}
 }

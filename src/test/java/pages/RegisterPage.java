@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -9,106 +10,96 @@ import io.appium.java_client.android.AndroidDriver;
 
 public class RegisterPage extends BasePage{
 
-
 	public RegisterPage(AndroidDriver driver) {
 		super(driver);
 		System.out.println("Kayıt Ol initialized");
 	}
 
-	By registerHeader = AppiumBy.accessibilityId("signup_title");
+	private By registerHeader = AppiumBy.accessibilityId("signup_title");
 
 	private By nameField = AppiumBy.accessibilityId("signup_name_input");
 	private By emailField = AppiumBy.accessibilityId("signup_email_input");
 	private By phoneField = AppiumBy.accessibilityId("signup_phone_input");
 	private By passwordField = AppiumBy.accessibilityId("signup_password_input");
+    private By registerButton = AppiumBy.accessibilityId("signup_continue_button");
+    private By goToSignInButton = AppiumBy.accessibilityId("signup_go_to_signin_button");
 
-	private By passwordVisibilityIcon = AppiumBy.accessibilityId("signup_password_input_visibility_icon");
-
-	private By kvkkCheckbox = AppiumBy.accessibilityId("signup_kvkk_checkbox");
-	private By kvkkPage = AppiumBy.accessibilityId("Okudum, Onaylıyorum");
-
-	private By userAgreementCheckbox = AppiumBy.accessibilityId("signup_user_agreement_checkbox");
-	private By userAgreementPage = AppiumBy.accessibilityId("Okudum, Onaylıyorum");
-
-	private By privacyCheckbox = AppiumBy.accessibilityId("signup_privacy_policy_checkbox");
-	private By privacyPage = AppiumBy.accessibilityId("Okudum, Onaylıyorum");
-
-	private By registerButton = AppiumBy.accessibilityId("signup_continue_button");
+	private By kvkkText = AppiumBy.accessibilityId("signup_kvkk_checkbox");
+	private By privacyPolicyText = AppiumBy.accessibilityId("signup_privacy_policy_checkbox");
 
 	private By emailError = By.xpath("//android.widget.TextView[@text='Lütfen geçerli bir email adresi girin.']");
-	
 	private By passwordError = By.xpath("//android.widget.TextView[@text='Şifre en az 6 karakter olmalıdır.']");
-
 	private By passwordUppercaseError = By.xpath("//android.widget.TextView[@text='Şifre en az 1 büyük harf içermelidir.']");
-
 	private By passwordLowercaseError = By.xpath("//android.widget.TextView[@text='Şifre en az 1 küçük harf içermelidir.']");
-
 	private By passwordEmptyError = By.xpath("//android.widget.TextView[@text='Şifre zorunludur.']");
 
-	private By goToSignInButton = AppiumBy.accessibilityId("signup_go_to_signin_button");
+    @Step("Kayıt sayfasının görüntülendiği doğrulanıyor")
+    public boolean isDisplayed() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(registerHeader)).isDisplayed();
+    }
 
-	public boolean isDisplayed() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(registerHeader)).isDisplayed();
-	}
+    @Step("İsim girildi: {name}")
+    public void enterName(String name) {
+        clickAndSendKeys(nameField, name);
+    }
 
-	public void enterName(String name) {
-		driver.findElement(nameField).click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(nameField)).sendKeys(name);
-	}
+    @Step("Email girildi: {email}")
+    public void enterEmail(String email) {
+        clickAndSendKeys(emailField, email);
+    }
 
-	public void enterEmail(String email) {
-		driver.findElement(emailField).click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(emailField)).sendKeys(email);
-	}
+    @Step("Telefon girildi: {phone}")
+    public void enterPhone(String phone) {
+        clickAndSendKeys(phoneField, phone);
+    }
 
-	public void enterPhone(String phone) {
-		driver.findElement(phoneField).click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(phoneField)).sendKeys(phone);
-	}
+    @Step("Şifre girildi")
+    public void enterPassword(String password) {
+        clickAndSendKeys(passwordField, password);
+    }
 
-	public void enterPassword(String password) {
-		driver.findElement(passwordField).click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(passwordField)).sendKeys(password);
-	}
+    @Step("Kayıt ol butonuna tıklandı")
+    public void clickRegister() {
+        wait.until(ExpectedConditions.elementToBeClickable(registerButton)).click();
+    }
 
-	public void acceptAgreements() {
-		wait.until(ExpectedConditions.elementToBeClickable(kvkkCheckbox)).click();
-		wait.until(ExpectedConditions.elementToBeClickable(userAgreementCheckbox)).click();
-		wait.until(ExpectedConditions.elementToBeClickable(privacyCheckbox)).click();
-	}
+    @Step("Kayıt formu dolduruldu")
+    public void fillRegisterForm(String name, String email, String phone, String password) {
+        enterName(name);
+        enterEmail(email);
+        enterPhone(phone);
+        driver.hideKeyboard();
+        enterPassword(password);
+        driver.hideKeyboard();
+    }
 
-	public void clickRegister() {
-		wait.until(ExpectedConditions.elementToBeClickable(registerButton)).click();
-	}
+    @Step("Kayıt ol butonu aktif mi kontrol ediliyor")
+    public boolean isRegisterButtonEnabled() {
+        return driver.findElement(registerButton).isEnabled();
+    }
 
-	public String getEmailErrorText() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(emailError)).getText();
-	}
+    @Step("Email hata mesajı alındı")
+    public String getEmailErrorText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(emailError)).getText();
+    }
 
-	public String getPasswordUppercaseErrorText() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordUppercaseError)).getText();
-	}
-	
-	public String getPasswordLowerCaseErrorText() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordLowercaseError)).getText();
-	}
-	
-	public String getPasswordMinLengthErrorText() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordError)).getText();
-	}
-	
-	public String getPasswordEmptyErrorText() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordEmptyError)).getText();
-	}
+    @Step("Şifre boş hata mesajı alındı")
+    public String getPasswordEmptyErrorText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordEmptyError)).getText();
+    }
 
-	public boolean isRegisterButtonEnabled() {
-		return driver.findElement(registerButton).isEnabled();
-	}
+    @Step("Şifre minimum uzunluk hata mesajı alındı")
+    public String getPasswordMinLengthErrorText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordError)).getText();
+    }
 
-	public void fillRegisterForm(String name, String email, String phone, String password) {
-		enterName(name);
-		enterEmail(email);
-		enterPhone(phone);
-		enterPassword(password);
-	}
+    @Step("Şifre büyük harf hata mesajı alındı")
+    public String getPasswordUppercaseErrorText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordUppercaseError)).getText();
+    }
+
+    @Step("Şifre küçük harf hata mesajı alındı")
+    public String getPasswordLowercaseErrorText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordLowercaseError)).getText();
+    }
 }
