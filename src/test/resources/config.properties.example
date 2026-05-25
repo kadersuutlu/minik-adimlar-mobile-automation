@@ -1,0 +1,3 @@
+api.base.url=YOUR_API_BASE_URL
+test.user.email=YOUR_TEST_EMAIL
+test.user.password=YOUR_TEST_PASSWORD

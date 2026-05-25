@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 import base.AppFlowManager;
 import base.BaseTest;
 import data.TestData;
+import utils.AccountCleanupUtil;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Feature("Kayıt Ol")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RegisterTest extends BaseTest {
+
+    private String registeredEmail;
 
     @BeforeEach
     public void setupPage() {
@@ -28,18 +31,30 @@ public class RegisterTest extends BaseTest {
     @Severity(SeverityLevel.CRITICAL)
     @Story("Başarılı kayıt")
     public void successfulRegisterRedirectsToLogin() {
+        registeredEmail = TestData.generateEmail();
+
         pages.registerPage().fillRegisterForm(
                 TestData.REG_VALID_NAME,
-                TestData.generateEmail(),
+                registeredEmail,
                 TestData.REG_VALID_PHONE,
                 TestData.REG_VALID_PASSWORD
         );
         pages.registerPage().clickRegister();
 
         assertTrue(pages.addFirstBabyPage().isDisplayed(),
-                "Başarılı kayıt sonrası ilk bebeğini ekle sayfası görüntülenmeli");
+                "Başarılı kayıt sonrası login sayfası görüntülenmeli");
     }
 
+    @AfterEach
+    public void cleanupIfNeeded() {
+        if (registeredEmail != null) {
+            AccountCleanupUtil.deleteTestAccount(
+                    registeredEmail,
+                    TestData.REG_VALID_PASSWORD
+            );
+            registeredEmail = null;
+        }
+    }
 
     @Test
     @Order(2)
