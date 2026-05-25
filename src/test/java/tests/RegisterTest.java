@@ -23,8 +23,8 @@ public class RegisterTest extends BaseTest {
 
     @Test
     @Order(1)
-    @DisplayName("Geçerli bilgilerle kayıt olunca login sayfasına yönlendirilmeli")
-    @Description("Ad, email, telefon ve şifre girilip kayıt olununca login ekranı görüntülenmeli")
+    @DisplayName("Geçerli bilgilerle kayıt olunca ilk bebeğini ekle sayfasına yönlendirilmeli")
+    @Description("Ad, email, telefon ve şifre girilip kayıt olununca ilk bebeğini ekle ekranı görüntülenmeli")
     @Severity(SeverityLevel.CRITICAL)
     @Story("Başarılı kayıt")
     public void successfulRegisterRedirectsToLogin() {
@@ -36,8 +36,8 @@ public class RegisterTest extends BaseTest {
         );
         pages.registerPage().clickRegister();
 
-        assertTrue(pages.loginPage().isDisplayed(),
-                "Başarılı kayıt sonrası login sayfası görüntülenmeli");
+        assertTrue(pages.addFirstBabyPage().isDisplayed(),
+                "Başarılı kayıt sonrası ilk bebeğini ekle sayfası görüntülenmeli");
     }
 
 
@@ -64,14 +64,9 @@ public class RegisterTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Story("Şifre validasyonu")
     public void registerWithEmptyPasswordShowsError() {
+        pages.registerPage().enterPassword(TestData.REG_EMPTY_PASSWORD);
         pages.registerPage().enterName(TestData.REG_VALID_NAME);
         driver.hideKeyboard();
-        pages.registerPage().enterEmail(TestData.generateEmail());
-        driver.hideKeyboard();
-        pages.registerPage().enterPhone(TestData.REG_VALID_PHONE);
-        driver.hideKeyboard();
-        pages.registerPage().enterPassword(TestData.REG_EMPTY_PASSWORD);
-        pages.registerPage().clickRegister();
 
         assertTrue(pages.registerPage().getPasswordEmptyErrorText().contains("zorunlu"),
                 "Şifre zorunlu hata mesajı görüntülenmeli");
