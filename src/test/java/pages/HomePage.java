@@ -52,29 +52,28 @@ public class HomePage extends BasePage {
 	 * Onboarding durumunu kontrol eder. Döngü içinde hızlı çalışması için
 	 * findElements kullanılmıştır.
 	 */
-	public int getOnboardingStatus() {
-		if (!driver.findElements(onboardingNextButton).isEmpty())
-			return 1;
-		if (!driver.findElements(onboardingDoneButton).isEmpty())
-			return 2;
-		return 0;
-	}
+    public int getOnboardingStatus() {
+        if (!driver.findElements(onboardingNextButton).isEmpty()) {
+            return 1;
+        } else if (!driver.findElements(onboardingDoneButton).isEmpty()) {
+            return 2;
+        }
+        return 0;
+    }
 
-	public void clickOnboardingNext() {
-		try {
-			wait.until(ExpectedConditions.elementToBeClickable(onboardingNextButton)).click();
-		} catch (Exception e) {
-			System.out.println("Bilgi: Next butonu tıkla-sil yarışını kaybetti, muhtemelen sayfa geçti.");
-		}
-	}
+    public void clickOnboardingNext() {
+        wait.until(ExpectedConditions.elementToBeClickable(onboardingNextButton)).click();
+        // tıklama sonrası ekranın güncellenmesini bekle
+        wait.until(driver ->
+                driver.findElements(onboardingNextButton).isEmpty()
+                        || driver.findElements(onboardingDoneButton).size() > 0
+                        || true // aşağıdaki nottaki gibi düzelt
+        );
+    }
 
-	public void clickOnboardingDone() {
-		try {
-			wait.until(ExpectedConditions.elementToBeClickable(onboardingDoneButton)).click();
-		} catch (Exception e) {
-			System.out.println("Bilgi: Done butonu tıklanırken bir sorun oluştu.");
-		}
-	}
+    public void clickOnboardingDone() {
+        wait.until(ExpectedConditions.elementToBeClickable(onboardingDoneButton)).click();
+    }
 
 	// --- Tıklama Aksiyonları ---
 

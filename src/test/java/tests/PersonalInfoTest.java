@@ -1,10 +1,10 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testng.Assert;
 
 import base.AppFlowManager;
 import base.BaseTest;
@@ -14,9 +14,9 @@ public class PersonalInfoTest extends BaseTest {
 	@BeforeEach
 	public void setUpPage() {
 
-		AppFlowManager flow = new AppFlowManager(driver);
+		AppFlowManager flow = new AppFlowManager(driver,pages);
 
-		flow.loginAndCleanStart("yeniemail2@test.com", "Valid1234");
+		flow.loginAndCleanStart("genctestmuhendis@gmail.com", "Test123");
 
 		assertTrue(pages.homePage().isDisplayed(), "Onboarding sonrası ana sayfa yüklenemedi!");
 
@@ -26,7 +26,7 @@ public class PersonalInfoTest extends BaseTest {
 
 	@Test
 	public void testPersonalInfoPageIsDisplayed() {
-		Assert.assertTrue(pages.personalInfoPage().isDisplayed(), "Kişisel Bilgiler sayfası görüntülenemedi!");
+		assertTrue(pages.personalInfoPage().isDisplayed(), "Kişisel Bilgiler sayfası görüntülenemedi!");
 	}
 
 	@Test
@@ -37,11 +37,11 @@ public class PersonalInfoTest extends BaseTest {
 		driver.hideKeyboard();
 		pages.personalInfoPage().clickSave();
 
-		Assert.assertEquals(pages.personalInfoPage().getAlertTitleText(), "E-posta Değişikliği");
+		assertEquals(pages.personalInfoPage().getAlertTitleText(), "E-posta Değişikliği");
 
 		pages.personalInfoPage().clickAlertDevamEt();
 
-		Assert.assertTrue(pages.loginPage().isDisplayed(), "Login ekranına yönlendirme");
+		assertTrue(pages.loginPage().isDisplayed(), "Login ekranına yönlendirme");
 	}
 
 	public void testCancelEmailChange() {
@@ -49,11 +49,11 @@ public class PersonalInfoTest extends BaseTest {
 		driver.hideKeyboard();
 		pages.personalInfoPage().clickSave();
 
-		Assert.assertEquals(pages.personalInfoPage().getAlertTitleText(), "E-posta Değişikliği");
+		assertEquals(pages.personalInfoPage().getAlertTitleText(), "E-posta Değişikliği");
 
 		pages.personalInfoPage().clickAlertIptal();
 
-		Assert.assertTrue(pages.profilePage().isDisplayed(), "İptal sonrası Personal Info sayfasından çıkıldı!");
+		assertTrue(pages.profilePage().isDisplayed(), "İptal sonrası Personal Info sayfasından çıkıldı!");
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class PersonalInfoTest extends BaseTest {
 
 		String errorText = pages.personalInfoPage().getEmailErrorText();
 
-		Assert.assertTrue(errorText.contains("Geçerli"), "Invalid email error message should be displayed");
+		assertTrue(errorText.contains("Geçerli"), "Invalid email error message should be displayed");
 
 	}
 
@@ -72,12 +72,12 @@ public class PersonalInfoTest extends BaseTest {
 		pages.personalInfoPage().enterName("Kaydedilmeyecek İsim");
 		pages.personalInfoPage().clickCancel();
 
-		Assert.assertTrue(pages.profilePage().isDisplayed());
+		assertTrue(pages.profilePage().isDisplayed());
 	}
 
 	@Test
 	public void testNavigationBackToProfile() {
 		pages.personalInfoPage().clickPrevious();
-		Assert.assertTrue(pages.profilePage().isDisplayed(), "Geri butonuna basınca Profile sayfasına dönülmedi!");
+		assertTrue(pages.profilePage().isDisplayed(), "Geri butonuna basınca Profile sayfasına dönülmedi!");
 	}
 }

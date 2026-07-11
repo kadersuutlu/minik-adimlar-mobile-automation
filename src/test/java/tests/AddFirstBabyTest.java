@@ -2,21 +2,24 @@ package tests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testng.Assert;
 
 import base.AppFlowManager;
 import base.BaseTest;
 import data.TestData;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
 public class AddFirstBabyTest extends BaseTest {
 
     @BeforeEach
     public void setUpPage() {
-    	AppFlowManager flow = new AppFlowManager(driver);
+    	AppFlowManager flow = new AppFlowManager(driver,pages);
         flow.goToLogin();
         //Eklenen bebek veritababnına da eklendği için ikinci testte bebek var olduğu için anasayfaya gidiyor
        
-        pages.loginPage().fillLoginForm(TestData.LOG_VALID_EMAIL, TestData.FP_NEW_PASSWORD);
+        pages.loginPage().fillLoginForm("genctestmuhendis@gmail.com", "Test123");
         driver.hideKeyboard();
         pages.loginPage().clickLogin();
     }
@@ -31,7 +34,7 @@ public class AddFirstBabyTest extends BaseTest {
         pages.addFirstBabyPage().selectGirl(); // veya TestData.BABY_VALID_GENDER_GIRL
         pages.addFirstBabyPage().selectRelationship(TestData.BABY_VALID_RELATIONSHIP_MOTHER);
 
-        Assert.assertTrue(pages.addFirstBabyPage().isSubmitButtonEnabled(),
+        assertTrue(pages.addFirstBabyPage().isSubmitButtonEnabled(),
                 "Submit button should be enabled");
     }
 
@@ -45,7 +48,7 @@ public class AddFirstBabyTest extends BaseTest {
         pages.addFirstBabyPage().selectGirl();
         pages.addFirstBabyPage().selectRelationship(TestData.BABY_VALID_RELATIONSHIP_MOTHER);
 
-        Assert.assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
+        assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
                 "Submit button should be disabled when name is empty");
     }
 
@@ -59,7 +62,7 @@ public class AddFirstBabyTest extends BaseTest {
         pages.addFirstBabyPage().selectGirl();
         pages.addFirstBabyPage().selectRelationship(TestData.BABY_VALID_RELATIONSHIP_MOTHER);
 
-        Assert.assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
+        assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
                 "Submit button should be disabled when birthdate is empty");
     }
 
@@ -73,14 +76,14 @@ public class AddFirstBabyTest extends BaseTest {
         pages.addFirstBabyPage().selectRelationship(TestData.BABY_VALID_RELATIONSHIP_MOTHER);
         // Cinsiyet seçilmiyor
 
-        Assert.assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
+        assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
                 "Submit button should be disabled when gender not selected");
     }
 
     @Test
     public void submitShouldBeDisabledWhenNothingFilled() {
 
-        Assert.assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
+        assertFalse(pages.addFirstBabyPage().isSubmitButtonEnabled(),
                 "Submit button should be disabled when form is empty");
     }
 }

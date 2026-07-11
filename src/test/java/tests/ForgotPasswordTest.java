@@ -2,7 +2,6 @@ package tests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testng.Assert;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -11,16 +10,19 @@ import base.AppFlowManager;
 import base.BaseTest;
 import data.TestData;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ForgotPasswordTest extends BaseTest {
 
 	@BeforeEach
 	public void setup() {
-		AppFlowManager flow = new AppFlowManager(driver);
+		AppFlowManager flow = new AppFlowManager(driver,pages);
 		flow.goToLogin();
 
 		pages.loginPage().clickForgotPassword();
 
-		Assert.assertTrue(pages.forgotPasswordPage().isDisplayedForgotPasswordTitle(),
+		assertTrue(pages.forgotPasswordPage().isDisplayedForgotPasswordTitle(),
 				"Login did not redirect to Forgot Password page");
 	}
 
@@ -30,7 +32,7 @@ public class ForgotPasswordTest extends BaseTest {
 		pages.forgotPasswordPage().enterEmail(TestData.FP_VALID_EMAIL);
 		pages.forgotPasswordPage().clickSendEmailButton();
 
-		Assert.assertTrue(pages.forgotPasswordPage().isDisplayedSentEmailTitle(),
+		assertTrue(pages.forgotPasswordPage().isDisplayedSentEmailTitle(),
 				"Forgot Password did not redirect to Sent Email page");
 	}
 
@@ -39,7 +41,7 @@ public class ForgotPasswordTest extends BaseTest {
 
 		pages.forgotPasswordPage().enterEmail(TestData.FP_INVALID_EMAIL);
 
-		Assert.assertFalse(pages.forgotPasswordPage().isSentEmailButtonEnabled(),
+		assertFalse(pages.forgotPasswordPage().isSentEmailButtonEnabled(),
 				"Send Email button should be disabled when inputs are invalid");
 	}
 
@@ -50,7 +52,7 @@ public class ForgotPasswordTest extends BaseTest {
 		pages.forgotPasswordPage().clickSendEmailButton();
 		pages.forgotPasswordPage().clickResetLinkSentButton();
 
-		Assert.assertTrue(pages.loginPage().isDisplayed(), "Sent Email Page did not redirect to Login page");
+		assertTrue(pages.loginPage().isDisplayed(), "Sent Email Page did not redirect to Login page");
 	}
 
 	
@@ -64,7 +66,7 @@ public class ForgotPasswordTest extends BaseTest {
 		pages.forgotPasswordPage().enterEmail(email);
 		pages.forgotPasswordPage().clickSendEmailButton();
 
-		Assert.assertTrue(pages.forgotPasswordPage().isDisplayedSentEmailTitle(),
+		assertTrue(pages.forgotPasswordPage().isDisplayedSentEmailTitle(),
 				"Forgot Password did not redirect to Sent Email page");
 
 		// Token API’den al
@@ -77,13 +79,13 @@ public class ForgotPasswordTest extends BaseTest {
 		//Uygulamaya Git butonuna tıkla
 		pages.forgotPasswordPage().clickGoToAppButton();
 
-		Assert.assertTrue(pages.forgotPasswordPage().isDisplayedCreateNewPasswordTitle());
+		assertTrue(pages.forgotPasswordPage().isDisplayedCreateNewPasswordTitle());
 
 		// TestData’daki yeni şifreyi kullan
 		pages.forgotPasswordPage().createNewPassword(TestData.FP_NEW_PASSWORD);
 
 		// Login sayfasına yönlendirildiğini doğrula
-		Assert.assertTrue(pages.loginPage().isDisplayed());
+		assertTrue(pages.loginPage().isDisplayed());
 
 		// Yeni şifre ile login ol
 		pages.loginPage().fillLoginForm(TestData.FP_VALID_EMAIL, TestData.FP_NEW_PASSWORD);
@@ -93,7 +95,7 @@ public class ForgotPasswordTest extends BaseTest {
 		boolean isAddFirstBabyVisible = pages.addFirstBabyPage().isDisplayed();
 		boolean isHomePageVisible = pages.homePage().isDisplayed();
 
-		Assert.assertTrue(isAddFirstBabyVisible || isHomePageVisible,
+		assertTrue(isAddFirstBabyVisible || isHomePageVisible,
 				"Login did not redirect to expected page after password reset");
 	}
 }

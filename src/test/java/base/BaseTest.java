@@ -3,29 +3,30 @@ package base;
 import java.net.URL;
 import java.time.Duration;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
 
-import data.TestData;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
-import pages.HomePage;
-import pages.LoginPage;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BaseTest {
 
 	protected AndroidDriver driver;
 	protected PageManager pages;
+    protected AppFlowManager flow;
 
-	@BeforeEach
+	@BeforeAll
 	public void setUp() throws Exception {
+
+        String apkPath   = System.getProperty("apk.path", "C:/apk/minikadimlar.apk");
+        String udid      = System.getProperty("device.udid", "R5CX631QKAD");
+        boolean useEmu   = Boolean.parseBoolean(System.getProperty("use.emulator", "false"));
 
 		// --- Option 1: Real Device Settings ---
 		UiAutomator2Options realDeviceOptions = new UiAutomator2Options()
 				.setDeviceName("Android Device")
-				.setUdid("R5CX631QKAD")
-				.setApp("C:/apk/minikadimlar.apk")
+				.setUdid(udid)
+				.setApp(apkPath)
 				.setAutoGrantPermissions(true)
 				.setNoReset(false)
 				.setAndroidInstallTimeout(Duration.ofSeconds(10));
@@ -34,7 +35,7 @@ public class BaseTest {
 		UiAutomator2Options emulatorOptions = new UiAutomator2Options()
 				.setDeviceName("Pixel_6")
 				.setUdid("emulator-5554")
-				.setApp("C:/apk/minikadimlar.apk")
+				.setApp(apkPath)
 				.setAppPackage("com.juniors.minikadimlar")
 				.setAppWaitActivity("com.juniors.minikadimlar.MainActivity")
 				.setAutoGrantPermissions(true)
@@ -43,14 +44,16 @@ public class BaseTest {
 
         Assumptions.assumeTrue(System.getenv("CI") == null, "CI ortamında Appium testleri atlanıyor");
 
-		driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), realDeviceOptions);
+        UiAutomator2Options selectedOptions = useEmu ? emulatorOptions : realDeviceOptions;
+        driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), selectedOptions);
 
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 		
 		pages = new PageManager(driver);
+        flow =new AppFlowManager(driver,pages);
 	}
 	
-	@AfterEach
+	@AfterAll
 	public void tearDown() {
 		try {
 			if (driver != null) {
@@ -61,5 +64,4 @@ public class BaseTest {
 		}
 		System.out.println("Test finished.");
 	}
-
 }

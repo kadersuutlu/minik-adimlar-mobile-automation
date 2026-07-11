@@ -19,7 +19,7 @@ public class RegisterTest extends BaseTest {
 
     @BeforeEach
     public void setupPage() {
-        AppFlowManager flow = new AppFlowManager(driver);
+        AppFlowManager flow = new AppFlowManager(driver,pages);
         flow.goToRegister();
     }
 

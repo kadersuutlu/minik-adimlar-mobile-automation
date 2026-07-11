@@ -1,31 +1,37 @@
 package data;
 
+import utils.ConfigReader;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class TestData {
+
+    public static String generateEmail() {
+        String timestamp = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("MMddHHmmss"));
+        return "test_" + timestamp + "@test.com";
+    }
+
+    public static final String LOG_VALID_EMAIL = ConfigReader.get("login.test.email");
+    public static final String LOG_VALID_PASSWORD = ConfigReader.get("login.test.password");
 
     // ===========================
     // Register Module
     // ===========================
-    public static final String REG_VALID_EMAIL = "unique_user1@test.com";
     public static final String REG_VALID_PASSWORD = "Test1234";
-    public static final String REG_VALID_NAME = "Kader Sutlu";
+    public static final String REG_VALID_NAME = "Test User";
     public static final String REG_VALID_PHONE = "5551234567";
-    public static final boolean REG_AGREEMENTS_CHECKED = true;
 
     public static final String REG_INVALID_EMAIL = "invalid_email";
     public static final String REG_EMPTY_PASSWORD = "";
     public static final String REG_SHORT_PASSWORD = "Abc12";
     public static final String REG_NO_UPPERCASE_PASSWORD = "test123";
     public static final String REG_NO_LOWERCASE_PASSWORD = "TEST123";
-    public static final String REG_EMPTY_NAME = "";
-    public static final String REG_INVALID_PHONE = "123";
-    public static final boolean REG_AGREEMENTS_UNCHECKED = false;
-    public static final String REG_DUPLICATE_EMAIL = "duplicate_email@test.com";
 
     // ===========================
     // Login Module
     // ===========================
-    public static final String LOG_VALID_EMAIL = "unique_user1@test.com";
-    public static final String LOG_VALID_PASSWORD = "Test1234";
 
     public static final String LOG_INVALID_EMAIL_FORMAT = "invalid_email_format";
     public static final String LOG_WRONG_PASSWORD = "WrongPass1";

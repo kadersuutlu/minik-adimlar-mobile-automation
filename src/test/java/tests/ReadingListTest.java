@@ -5,46 +5,52 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import io.qameta.allure.*;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import base.AppFlowManager;
 import base.BaseTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Epic("Okuma Listesi")
+@Feature("Reading List Yönetimi")
 public class ReadingListTest extends BaseTest {
 
+    @BeforeAll
+    public void loginOnce() {
+        AppFlowManager flow = new AppFlowManager(driver,pages);
+        flow.loginAndCleanStart("Kadersutlu34@gmail.com", "Test123");
+
+        assertTrue(pages.homePage().isDisplayed(), "Home page not loaded!");
+    }
+
     @BeforeEach
-    public void setUpPage() {
-
-        AppFlowManager flow = new AppFlowManager(driver);
-
-        flow.loginAndCleanStart("yeniemail2@test.com", "Valid1234");
-
-        assertTrue(pages.homePage().isDisplayed(),
-                "Home page not loaded!");
-
+    public void navigateToReadingList() {
         pages.homePage().clickProfileIcon();
-
-        assertTrue(pages.profilePage().isDisplayed(),
-                "Profile page not loaded!");
+        assertTrue(pages.profilePage().isDisplayed(), "Profile page not loaded!");
 
         pages.profilePage().clickProfileReadingListButton();
-
-        assertTrue(pages.readingListPage().isDisplayed(),
-                "Reading List page not loaded!");
+        assertTrue(pages.readingListPage().isDisplayed(), "Reading List page not loaded!");
     }
 
     private void selectBabyTab() {
-        //  önce diğer taba geç
         pages.readingListPage().selectMyselfTab();
-
-        // sonra baby'e dön
         pages.readingListPage().selectBabyTab();
+
+        assertTrue(pages.readingListPage().isBabyTabSelected(),
+                "Baby tab is not selected!");
     }
 
     private void selectMyselfTab() {
         pages.readingListPage().selectMyselfTab();
+
+        assertTrue(pages.readingListPage().isMyselfTabSelected(),
+                "Myself tab is not selected!");
     }
 
     private void selectTab(String tab) {
@@ -55,28 +61,34 @@ public class ReadingListTest extends BaseTest {
         }
     }
 
-    private void ensureListEmpty(String tab) {
-
-        selectTab(tab);
-
-        while (pages.readingListPage().hasItems()) {
+    private void clearAllItems() {
+        int safety = 0;
+        while (pages.readingListPage().hasItems() && safety < 50) {
             pages.readingListPage().clickRemoveIconByIndex(0);
+            safety++;
         }
+        assertTrue(pages.readingListPage().isReadingListEmpty(),
+                "Liste 50 denemede boşaltılamadı, silme işlemi çalışmıyor olabilir.");
+    }
+
+    private void ensureListEmpty(String tab) {
+        selectTab(tab);
+        clearAllItems();
     }
 
     private void ensureListHasItems(String tab) {
-
         selectTab(tab);
-
         assumeTrue(
                 pages.readingListPage().hasItems(),
                 tab + " list is empty → test skipped"
         );
     }
 
-    // Liste boş olmalı
-    @ParameterizedTest
+    @ParameterizedTest(name = "Tab: {0}")
     @ValueSource(strings = {"baby", "myself"})
+    @DisplayName("Liste boşken empty state doğru gösterilmeli")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Boş liste durumu")
     public void shouldShowEmptyState(String tab) {
 
         ensureListEmpty(tab);
@@ -92,27 +104,11 @@ public class ReadingListTest extends BaseTest {
                 "Empty text is missing! Tab: " + tab);
     }
 
-    // Liste dolu ya da boş olabilir
-    @ParameterizedTest
+    @ParameterizedTest(name = "Tab: {0}")
     @ValueSource(strings = {"baby", "myself"})
-    public void shouldHaveValidItemCountPerTab(String tab) {
-
-        if (tab.equals("baby")) {
-            pages.readingListPage().selectBabyTab();
-        } else {
-            pages.readingListPage().selectMyselfTab();
-        }
-
-        int count = pages.readingListPage().getItemCount();
-
-        System.out.println(tab + " count: " + count);
-
-        assertTrue(count >= 0);
-    }
-
-    // Liste dolu olmalı
-    @ParameterizedTest
-    @ValueSource(strings = {"baby", "myself"})
+    @DisplayName("Liste doluysa item'lar görünür olmalı")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Item görünürlüğü")
     public void shouldDisplayItemsIfExist(String tab) {
 
         selectTab(tab);
@@ -125,9 +121,11 @@ public class ReadingListTest extends BaseTest {
         }
     }
 
-    // Liste dolu olmalı
-    @ParameterizedTest
+    @ParameterizedTest(name = "Tab: {0}")
     @ValueSource(strings = {"baby", "myself"})
+    @DisplayName("Item silme ikonuna tıklanınca item listeden kaldırılmalı")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Item silme")
     public void shouldRemoveItemWhenClicked(String tab) {
 
         ensureListHasItems(tab);
@@ -138,24 +136,25 @@ public class ReadingListTest extends BaseTest {
                 "Item was not removed! Tab: " + tab);
     }
 
-    // Liste dolu ya da boş olabilir
-    @ParameterizedTest
+    @ParameterizedTest(name = "Tab: {0}")
     @ValueSource(strings = {"baby", "myself"})
+    @DisplayName("Tüm item'lar silindiğinde liste boş duruma geçmeli")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Item silme")
     public void shouldEmptyListAfterRemovingAllItems(String tab) {
 
         selectTab(tab);
-
-        while (pages.readingListPage().hasItems()) {
-            pages.readingListPage().clickRemoveIconByIndex(0);
-        }
+        clearAllItems();
 
         assertTrue(pages.readingListPage().isReadingListEmpty(),
                 "List is not empty! Tab: " + tab);
     }
 
-    // Liste dolu olmalı
-    @ParameterizedTest
+    @ParameterizedTest(name = "Tab: {0}")
     @ValueSource(strings = {"baby", "myself"})
+    @DisplayName("Beklenen içerik listede yer almalı")
+    @Severity(SeverityLevel.MINOR)
+    @Story("İçerik doğrulama")
     public void shouldContainExpectedContent(String tab) {
 
         selectTab(tab);

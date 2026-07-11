@@ -1,11 +1,7 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
-import static org.testng.AssertJUnit.assertEquals;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,15 +9,14 @@ import org.junit.jupiter.api.Test;
 
 import base.AppFlowManager;
 import base.BaseTest;
-import org.testng.AssertJUnit;
 
 public class MyBabiesTest extends BaseTest {
 
     @BeforeEach
     public void setUpPage() {
-        AppFlowManager flow = new AppFlowManager(driver);
+        AppFlowManager flow = new AppFlowManager(driver,pages);
         
-        flow.loginAndCleanStart("yeniemail2@test.com", "Valid1234");
+        flow.loginAndCleanStart("genctestmuhendis@gmail.com", "Test123");
 
         assertTrue(pages.homePage().isDisplayed(), "Onboarding sonrası ana sayfa yüklenemedi!");
         pages.homePage().clickProfileIcon();
@@ -39,7 +34,7 @@ public class MyBabiesTest extends BaseTest {
 
         // 2. Doğrulama: Modal açıldı mı ve başlığı "Bebek Ekle" mi?
         assertTrue(pages.myBabiesPage().isModalDisplayed(), "Modal açılmadı!");
-        AssertJUnit.assertEquals("Ekleme modal başlığı hatalı!", "Bebek Ekle", pages.myBabiesPage().getModalTitleText());
+        assertEquals("Ekleme modal başlığı hatalı!", "Bebek Ekle", pages.myBabiesPage().getModalTitleText());
         // 3. Formu doldur ve Kaydet
         String babyName = "Alya_" + System.currentTimeMillis() / 1000;
         pages.myBabiesPage().fillBabyForm(babyName, "15.10.2025", "Kız", "Anne");
@@ -58,7 +53,7 @@ public class MyBabiesTest extends BaseTest {
 
         // 2. Doğrulama: Aynı modal açıldı mı ve başlığı bu sefer "Bebek Güncelle" mi?
         assertTrue(pages.myBabiesPage().isModalDisplayed(), "Modal açılmadı!");
-        AssertJUnit.assertEquals("Güncelleme modal başlığı hatalı!", "Bebek Güncelle", pages.myBabiesPage().getModalTitleText());
+        assertEquals("Güncelleme modal başlığı hatalı!", "Bebek Güncelle", pages.myBabiesPage().getModalTitleText());
         // 3. Formu güncelle ve Kaydet
         pages.myBabiesPage().fillBabyForm("Toprak su Yeni", "01.01.2026", "Erkek", "Baba");
         pages.myBabiesPage().clickSaveButton();

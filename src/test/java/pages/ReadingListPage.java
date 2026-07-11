@@ -1,7 +1,5 @@
 package pages;
 
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -52,11 +50,13 @@ public class ReadingListPage extends BasePage {
     public void selectBabyTab() {
         wait.until(ExpectedConditions.elementToBeClickable(babyTab)).click();
         waitForScreenReady();
+        wait.until(driver -> isBabyTabSelected());
     }
 
     public void selectMyselfTab() {
         wait.until(ExpectedConditions.elementToBeClickable(myselfTab)).click();
         waitForScreenReady();
+        wait.until(driver -> isMyselfTabSelected());
     }
 
     private void waitForScreenReady() {
@@ -65,6 +65,22 @@ public class ReadingListPage extends BasePage {
                         || driver.findElements(emptyBaby).size() > 0
                         || driver.findElements(emptyParent).size() > 0
         );
+    }
+
+    public boolean isBabyTabSelected() {
+        return isTabSelected(babyTab);
+    }
+
+    public boolean isMyselfTabSelected() {
+        return isTabSelected(myselfTab);
+    }
+
+    private boolean isTabSelected(By tabLocator) {
+        WebElement tab = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(tabLocator)
+        );
+        String selected = tab.getAttribute("selected");
+        return "true".equalsIgnoreCase(selected);
     }
 
     public int getItemCount() {

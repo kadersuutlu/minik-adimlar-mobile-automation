@@ -14,9 +14,9 @@ public class ChangePasswordTest extends BaseTest {
 	@BeforeEach
 	public void setUpPage() {
 
-		AppFlowManager flow = new AppFlowManager(driver);
+		AppFlowManager flow = new AppFlowManager(driver,pages);
 		flow.goToLogin();
-		pages.loginPage().fillLoginForm("yeniemail2@test.com", "Valid1234");
+		pages.loginPage().fillLoginForm("genctestmuhendis@gmail.com", "Test123");
 		driver.hideKeyboard();
 		pages.loginPage().clickLogin();
 

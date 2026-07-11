@@ -1,15 +1,14 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testng.Assert;
 
 import api.ContentApi;
 import base.AppFlowManager;
 import base.BaseTest;
 import data.TestData;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentsTest extends BaseTest {
 
@@ -17,9 +16,9 @@ public class ContentsTest extends BaseTest {
 	@BeforeEach
 	public void setUpPage() {
 		
-AppFlowManager flow = new AppFlowManager(driver);
+AppFlowManager flow = new AppFlowManager(driver,pages);
         
-        flow.loginAndCleanStart("yeniemail2@test.com", "Valid1234");
+        flow.loginAndCleanStart("genctestmuhendis@gmail.com", "Test123");
 
         assertTrue(pages.homePage().isDisplayed(), "Onboarding sonrası ana sayfa yüklenemedi!");
         pages.homePage().clickNavigationContents();
@@ -35,7 +34,7 @@ AppFlowManager flow = new AppFlowManager(driver);
 
 		String apiTitle = ContentApi.getFirstContentTitleByAudience("BABY");
 
-		Assert.assertEquals(uiTitle, apiTitle);
+		assertEquals(uiTitle, apiTitle);
 	}
 
 	@Test
@@ -47,7 +46,7 @@ AppFlowManager flow = new AppFlowManager(driver);
 
 		String apiTitle = ContentApi.getFirstContentTitleByAudience("PARENT");
 
-		Assert.assertEquals(uiTitle, apiTitle);
+		assertEquals(uiTitle, apiTitle);
 	}
 
 	@Test
@@ -59,7 +58,7 @@ AppFlowManager flow = new AppFlowManager(driver);
 	    pages.contentsPage().clickParentContentsTab();
 	    String parentTitle = pages.contentsPage().getFirstContentTitle();
 
-	    Assert.assertNotEquals(babyTitle, parentTitle,
+	    assertNotEquals(babyTitle, parentTitle,
 	            "Content list did not change after switching tabs");
 	}
 	
@@ -70,7 +69,7 @@ AppFlowManager flow = new AppFlowManager(driver);
 
 	    String firstTitle = pages.contentsPage().getFirstContentTitle();
 
-	    Assert.assertTrue(firstTitle.toLowerCase().contains("uyku"),
+	    assertTrue(firstTitle.toLowerCase().contains("uyku"),
 	            "Search did not filter content correctly");
 	}
 	
@@ -83,7 +82,7 @@ AppFlowManager flow = new AppFlowManager(driver);
 	    pages.contentsPage().clickContentListReadingListIcon();
 
 
-	    Assert.assertTrue(pages.readingListPage().isContentPresent(title),
+	    assertTrue(pages.readingListPage().isContentPresent(title),
 	            "Content was not added to reading list");
 	}
 	
@@ -92,7 +91,7 @@ AppFlowManager flow = new AppFlowManager(driver);
 
 		pages.contentsPage().clickContentListNotificationIcon();
 
-		Assert.assertTrue(pages.notificationPage().isDisplayed(), "contents page did not redirect to notification page");
+		assertTrue(pages.notificationPage().isDisplayed(), "contents page did not redirect to notification page");
 	}
 
 	@Test
@@ -100,6 +99,6 @@ AppFlowManager flow = new AppFlowManager(driver);
 
 		pages.contentsPage().clickContentListReadingListIcon();
 
-		Assert.assertTrue(pages.readingListPage().isDisplayed(), "Reading page did not redirect to notification page");
+		assertTrue(pages.readingListPage().isDisplayed(), "Reading page did not redirect to notification page");
 	}
 }

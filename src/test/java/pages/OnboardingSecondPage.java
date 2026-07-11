@@ -5,35 +5,32 @@ import org.openqa.selenium.By;
 import base.BasePage;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class OnboardingSecondPage extends BasePage{
 
 	public OnboardingSecondPage(AndroidDriver driver) {
 		super(driver);
-		System.out.println("Onboarding 1 initialized");
+		System.out.println("Onboarding 2 initialized");
 	}
 
 	private By registerButton = AppiumBy.accessibilityId("auth_choice_signup_button");
 	private By loginButton = AppiumBy.accessibilityId("auth_choice_signin_button");
 
-	public boolean isWelcomeToAppDisplayed() {
-		return driver.findElement(registerButton).isDisplayed();
-	}
-	
-	public boolean isRegisterButtonDisplayed() {
-		return driver.findElement(registerButton).isDisplayed();
-	}
+    public boolean isRegisterButtonDisplayed() {
+        return isDisplayed(registerButton);
+    }
 
-	public boolean isLoginButtonDisplayed() {
-		return driver.findElement(loginButton).isDisplayed();
-	}
+    public boolean isLoginButtonDisplayed() {
+        return isDisplayed(loginButton);
+    }
 
-	public void tapRegister() {
-		driver.findElement(registerButton).click();
-	}
+    public void tapRegister() {
+        click(registerButton);
+    }
 
-	public void tapLogin() {
-		driver.findElement(loginButton).click();
-	}
+    public void tapLogin() {
+        click(loginButton);
+    }
 
 }

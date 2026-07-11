@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -14,75 +15,93 @@ public class LoginPage extends BasePage{
 		System.out.println("Giriş Yap initialized");
 	}
 
-	By loginHeader = AppiumBy.accessibilityId("signin_title");
+	private By loginHeader = AppiumBy.accessibilityId("signin_title");
 
 	private By emailField = AppiumBy.accessibilityId("signin_email_input");
 	private By passwordField = AppiumBy.accessibilityId("signin_password_input");
+    private By loginButton = AppiumBy.accessibilityId("signin_continue_button");
+    private By goToSignUpButton = AppiumBy.accessibilityId("signin_go_to_signup_button");
 
 	private By passwordVisibilityIcon = AppiumBy
 			.xpath("//*[contains(@resource-id,'signin_password_input_visibility_icon')]");
 
-	private By loginButton = AppiumBy.accessibilityId("signin_continue_button");
-
-	private By forgotPasswordField = AppiumBy.accessibilityId("signin_forgot_password_text");
+	private By forgotPasswordText = AppiumBy.accessibilityId("signin_forgot_password_text");
 
 	private By emailError = By.xpath("//android.widget.TextView[@text='Bu e-mail adresi kayıtlı değil.']");
 	private By passwordError = By.xpath("//android.widget.TextView[@text='Şifrenizi eksik ya da hatalı girdiniz.']");
 
-	private By goToSignUpButton = AppiumBy.accessibilityId("signin_go_to_signup_button");
+    private final By errorDialogTitle = By.id("com.juniors.minikadimlar:id/alert_title");
+    private final By errorDialogOkButton = By.id("android:id/button1");
 
-	public boolean isDisplayed() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(loginHeader)).isDisplayed();
-	}
+    @Step("Login sayfasının görüntülendiği doğrulanıyor")
+    public boolean isDisplayed() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(loginHeader)).isDisplayed();
+    }
 
-	public void enterEmail(String email) {
-		driver.findElement(emailField).click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(emailField)).sendKeys(email);
-	}
+    @Step("Email girildi: {email}")
+    public void enterEmail(String email) {
+        clickAndSendKeys(emailField, email);
+    }
 
-	public void enterPassword(String password) {
-		driver.findElement(passwordField).click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(passwordField)).sendKeys(password);
-	}
+    @Step("Şifre girildi")
+    public void enterPassword(String password) {
+        clickAndSendKeys(passwordField, password);
+    }
 
-	public void clickLogin() {
-		wait.until(ExpectedConditions.elementToBeClickable(loginButton)).click();
-	}
+    @Step("Giriş yap butonuna tıklandı")
+    public void clickLogin() {
+        wait.until(ExpectedConditions.elementToBeClickable(loginButton)).click();
+    }
 
-	public String getEmailErrorText() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(emailError)).getText();
-	}
+    @Step("Şifremi unuttum butonuna tıklandı")
+    public void clickForgotPassword() {
+        wait.until(ExpectedConditions.elementToBeClickable(forgotPasswordText)).click();
+    }
 
-	public String getPasswordErrorText() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordError)).getText();
-	}
+    @Step("Şifre görünürlük ikonuna tıklandı")
+    public void clickPasswordVisibility() {
+        wait.until(ExpectedConditions.elementToBeClickable(passwordVisibilityIcon)).click();
+    }
 
-	public boolean isLoginButtonEnabled() {
-		return driver.findElement(loginButton).isEnabled();
-	}
+    @Step("Kayıt ol sayfasına git butonuna tıklandı")
+    public void clickGoToSignUp() {
+        wait.until(ExpectedConditions.elementToBeClickable(goToSignUpButton)).click();
+    }
 
-	public void fillLoginForm(String email, String password) {
-		enterEmail(email);
-		enterPassword(password);
-	}
+    @Step("Login formu dolduruldu")
+    public void fillLoginForm(String email, String password) {
+        enterEmail(email);
+        enterPassword(password);
+    }
 
-	public void clickEmailField() {
-		driver.findElement(emailField).click();
-	}
+    // Getters
+    @Step("Login butonu aktif mi kontrol ediliyor")
+    public boolean isLoginButtonEnabled() {
+        return driver.findElement(loginButton).isEnabled();
+    }
 
-	public void clickForgotPassword() {
-		wait.until(ExpectedConditions.visibilityOfElementLocated(forgotPasswordField)).click();
-	}
+    @Step("Şifre field metni alındı")
+    public String getPasswordFieldText() {
+        return driver.findElement(passwordField).getText();
+    }
 
-	public void clickPasswordVisibility() {
-		wait.until(ExpectedConditions.visibilityOfElementLocated(passwordVisibilityIcon)).click();
-	}
+    @Step("Email hata mesajı alındı")
+    public String getEmailErrorText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(emailError)).getText();
+    }
 
-	public String getPasswordText() {
-		return driver.findElement(passwordField).getText();
-	}
+    @Step("Şifre hata mesajı alındı")
+    public String getPasswordErrorText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordError)).getText();
+    }
 
-	public void clickGoToSignUpButton() {
-		wait.until(ExpectedConditions.visibilityOfElementLocated(goToSignUpButton)).click();
-	}
+    @Step("Hata dialog başlığı alındı")
+    public String getErrorDialogTitle() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(errorDialogTitle)).getText();
+    }
+
+    @Step("Hata dialog'u kapatıldı")
+    public void dismissErrorDialog() {
+        wait.until(ExpectedConditions.elementToBeClickable(errorDialogOkButton)).click();
+    }
 }

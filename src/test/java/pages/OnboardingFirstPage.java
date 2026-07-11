@@ -1,6 +1,7 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import base.BasePage;
@@ -16,12 +17,15 @@ public class OnboardingFirstPage extends BasePage{
 
 	private By continueButton = AppiumBy.accessibilityId("welcome_continue_button");
 
-	public void tapContinue() {
-		wait.until(ExpectedConditions.visibilityOfElementLocated(continueButton));
-		driver.findElement(continueButton).click();
-	}
+    public void tapContinue() {
+        click(continueButton);
+    }
 
-	public boolean isContinueButtonDisplayed() {
-		return driver.findElement(continueButton).isDisplayed();
-	}
+    public boolean isContinueButtonDisplayed() {
+        try {
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(continueButton)) != null;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
 }
