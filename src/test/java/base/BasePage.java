@@ -28,6 +28,7 @@ public abstract class BasePage {
     protected void clickAndSendKeys(By locator, String text) {
         WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
         element.click();
+        element.clear();
         element.sendKeys(text);
     }
 

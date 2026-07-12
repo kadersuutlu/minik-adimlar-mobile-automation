@@ -8,7 +8,7 @@ import base.BasePage;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 
-public class LoginPage extends BasePage{
+public class LoginPage extends BasePage {
 
 	public LoginPage(AndroidDriver driver) {
 		super(driver);
@@ -27,11 +27,10 @@ public class LoginPage extends BasePage{
 
     private By forgotPasswordText = AppiumBy.accessibilityId("signin_forgot_password_text");
 
-    private By emailError = By.xpath("//android.widget.TextView[@text='Bu e-mail adresi kayıtlı değil.']");
-    private By passwordError = By.xpath("//android.widget.TextView[@text='Şifrenizi eksik ya da hatalı girdiniz.']");
-
     private final By errorDialogTitle = By.id("com.juniors.minikadimlar:id/alert_title");
     private final By errorDialogOkButton = By.id("android:id/button1");
+
+    private By emailFormatError = By.xpath("//android.widget.TextView[@text='Geçersiz e-mail adresi.']");
 
     @Step("Login sayfasının görüntülendiği doğrulanıyor")
     public boolean isDisplayed() {
@@ -81,17 +80,12 @@ public class LoginPage extends BasePage{
 
     @Step("Şifre field metni alındı")
     public String getPasswordFieldText() {
-        return driver.findElement(passwordField).getText();
+        return wait.until(ExpectedConditions.presenceOfElementLocated(passwordField)).getText();
     }
 
-    @Step("Email hata mesajı alındı")
-    public String getEmailErrorText() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(emailError)).getText();
-    }
-
-    @Step("Şifre hata mesajı alındı")
-    public String getPasswordErrorText() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordError)).getText();
+    @Step("Email format hata mesajı alındı")
+    public String getEmailFormatErrorText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(emailFormatError)).getText();
     }
 
     @Step("Hata dialog başlığı alındı")

@@ -35,10 +35,10 @@ public class TestData {
     // ===========================
 
     public static final String LOG_USER_WITH_BABY_EMAIL = "kullanici_bebekli@test.com";
-    public static final String LOG_USER_WITH_BABY_PASSWORD = "Test1234";
+    public static final String LOG_USER_WITH_BABY_PASSWORD = "Test1234!";
 
     public static final String LOG_USER_WITHOUT_BABY_EMAIL = "kullanici_bebeksiz@test.com";
-    public static final String LOG_USER_WITHOUT_BABY_PASSWORD = "Test1234";
+    public static final String LOG_USER_WITHOUT_BABY_PASSWORD = "Test1234!";
 
     public static final String LOG_INVALID_EMAIL_FORMAT = "invalid_email_format";
     public static final String LOG_WRONG_PASSWORD = "WrongPass1";

@@ -10,62 +10,67 @@ import data.TestData;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Feature("Giriş Yap")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginTest extends BaseTest {
 
     @BeforeEach
     public void setupPage() {
-        AppFlowManager flow = new AppFlowManager(driver,pages);
+        resetApp();
         flow.goToLogin();
     }
 
-
     @Test
-    @Order(1)
-    @Disabled("BUG: Kullanıcı durumuna göre yönlendirme tutarsız, tekrar bakılacak")
-    @DisplayName("Geçerli bilgilerle giriş yapınca doğru sayfaya yönlendirilmeli")
-    @Description("Bebek eklenmiş kullanıcı → Ana sayfa, eklenmemiş → Bebek ekle sayfası")
+    @DisplayName("Bebek eklenmiş kullanıcı girişte ana sayfaya yönlendirilmeli")
     @Severity(SeverityLevel.CRITICAL)
     @Story("Başarılı giriş")
-    public void successfulLoginRedirectsToCorrectPage() {
+    public void loginWithBabyUser_redirectsToHomePage() {
         pages.loginPage().fillLoginForm(
-                TestData.LOG_VALID_EMAIL,
-                TestData.LOG_VALID_PASSWORD
+                TestData.LOG_USER_WITH_BABY_EMAIL,
+                TestData.LOG_USER_WITH_BABY_PASSWORD
         );
         driver.hideKeyboard();
         pages.loginPage().clickLogin();
 
-        boolean isAddFirstBabyVisible = pages.addFirstBabyPage().isDisplayed();
-        boolean isHomePageVisible = pages.homePage().isDisplayed();
+        flow.passMainOnboarding();
 
-        assertTrue(isAddFirstBabyVisible || isHomePageVisible,
-                "Giriş sonrası beklenen sayfaya yönlendirilmedi");
+        assertTrue(pages.homePage().isDisplayed(), "Bebekli kullanıcı ana sayfaya yönlendirilmeli");
     }
 
+    @Test
+    @DisplayName("Bebek eklenmemiş kullanıcı girişte ilk bebeğini ekle sayfasına yönlendirilmeli")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Başarılı giriş")
+    public void loginWithoutBabyUser_redirectsToAddFirstBabyPage() {
+        pages.loginPage().fillLoginForm(
+                TestData.LOG_USER_WITHOUT_BABY_EMAIL,
+                TestData.LOG_USER_WITHOUT_BABY_PASSWORD
+        );
+        driver.hideKeyboard();
+        pages.loginPage().clickLogin();
+
+        assertTrue(pages.addFirstBabyPage().isDisplayed(), "Bebeksiz kullanıcı ilk bebeğini ekle sayfasına yönlendirilmeli");
+    }
 
     @Test
-    @Order(2)
     @DisplayName("Geçersiz email formatıyla giriş yapınca hata mesajı gösterilmeli")
     @Severity(SeverityLevel.NORMAL)
     @Story("Email validasyonu")
     public void loginWithInvalidEmailFormatShowsError() {
         pages.loginPage().enterEmail(TestData.LOG_INVALID_EMAIL_FORMAT);
-        pages.loginPage().enterPassword(TestData.LOG_WRONG_PASSWORD);
         driver.hideKeyboard();
 
-        String errorText = pages.loginPage().getEmailErrorText();
-        assertFalse(errorText.isEmpty(), "Geçersiz email hata mesajı görüntülenmeli");
+        String errorText = pages.loginPage().getEmailFormatErrorText();
+        assertEquals("Geçersiz e-mail adresi.", errorText,
+                "Geçersiz email format hata mesajı görüntülenmeli");
     }
 
     @Test
-    @Order(3)
     @DisplayName("Kayıtlı olmayan email ile giriş yapınca hata dialog'u gösterilmeli")
     @Severity(SeverityLevel.NORMAL)
     @Story("Email validasyonu")
     public void loginWithUnregisteredEmailShowsError() {
         pages.loginPage().fillLoginForm(
                 TestData.LOG_UNREGISTERED_EMAIL,
-                TestData.LOG_VALID_PASSWORD
+                TestData.LOG_USER_WITH_BABY_PASSWORD
         );
         driver.hideKeyboard();
         pages.loginPage().clickLogin();
@@ -77,30 +82,26 @@ public class LoginTest extends BaseTest {
         pages.loginPage().dismissErrorDialog();
     }
 
-
     @Test
-    @Order(4)
-    @DisplayName("Boş şifre ile giriş yapınca hata mesajı gösterilmeli")
+    @DisplayName("Boş şifre girildiğinde giriş butonu pasif olmalı")
     @Severity(SeverityLevel.NORMAL)
     @Story("Şifre validasyonu")
-    public void loginWithEmptyPasswordShowsError() {
-        pages.loginPage().enterEmail(TestData.LOG_VALID_EMAIL);
+    public void loginButtonDisabledWhenPasswordEmpty() {
+        pages.loginPage().enterEmail(TestData.LOG_USER_WITH_BABY_EMAIL);
         pages.loginPage().enterPassword(TestData.LOG_EMPTY_PASSWORD);
         driver.hideKeyboard();
-        pages.loginPage().clickLogin();
 
-        String errorText = pages.loginPage().getPasswordErrorText();
-        assertFalse(errorText.isEmpty(), "Boş şifre hata mesajı görüntülenmeli");
+        assertFalse(pages.loginPage().isLoginButtonEnabled(),
+                "Şifre boşken giriş butonu pasif olmalı");
     }
 
     @Test
-    @Order(5)
     @DisplayName("Yanlış şifre ile giriş yapınca hata dialog'u gösterilmeli")
     @Severity(SeverityLevel.CRITICAL)
     @Story("Şifre validasyonu")
     public void loginWithWrongPasswordShowsError() {
         pages.loginPage().fillLoginForm(
-                TestData.LOG_VALID_EMAIL,
+                TestData.LOG_USER_WITH_BABY_EMAIL,
                 TestData.LOG_WRONG_PASSWORD
         );
         driver.hideKeyboard();
@@ -113,9 +114,7 @@ public class LoginTest extends BaseTest {
         pages.loginPage().dismissErrorDialog();
     }
 
-
     @Test
-    @Order(6)
     @DisplayName("Geçersiz bilgilerle login butonu disabled olmalı")
     @Severity(SeverityLevel.MINOR)
     @Story("Buton durumu")
@@ -128,34 +127,30 @@ public class LoginTest extends BaseTest {
                 "Geçersiz bilgilerle login butonu disabled olmalı");
     }
 
-
     @Test
-    @Order(7)
     @DisplayName("Şifre görünürlük ikonu ile şifre gösterilip gizlenebilmeli")
     @Severity(SeverityLevel.MINOR)
     @Story("Şifre görünürlüğü")
     public void passwordVisibilityToggleWorksCorrectly() {
-        pages.loginPage().enterPassword(TestData.LOG_VALID_PASSWORD);
+        pages.loginPage().enterPassword(TestData.LOG_USER_WITH_BABY_PASSWORD);
         driver.hideKeyboard();
 
         String hiddenText = pages.loginPage().getPasswordFieldText();
-        assertNotEquals(hiddenText, TestData.LOG_VALID_PASSWORD,
+        assertNotEquals(hiddenText, TestData.LOG_USER_WITH_BABY_PASSWORD,
                 "Şifre başlangıçta gizli olmalı");
 
         pages.loginPage().clickPasswordVisibility();
         String visibleText = pages.loginPage().getPasswordFieldText();
-        assertEquals(visibleText, TestData.LOG_VALID_PASSWORD,
+        assertEquals(visibleText, TestData.LOG_USER_WITH_BABY_PASSWORD,
                 "İkon tıklanınca şifre görünür olmalı");
 
         pages.loginPage().clickPasswordVisibility();
         String hiddenAgain = pages.loginPage().getPasswordFieldText();
-        assertNotEquals(hiddenAgain, TestData.LOG_VALID_PASSWORD,
+        assertNotEquals(hiddenAgain, TestData.LOG_USER_WITH_BABY_PASSWORD,
                 "İkon tekrar tıklanınca şifre gizlenmeli");
     }
 
-
     @Test
-    @Order(8)
     @DisplayName("Şifremi unuttum tıklanınca şifremi unuttum sayfasına gidilmeli")
     @Severity(SeverityLevel.NORMAL)
     @Story("Navigasyon")
@@ -167,7 +162,6 @@ public class LoginTest extends BaseTest {
     }
 
     @Test
-    @Order(9)
     @DisplayName("Kayıt ol tıklanınca kayıt sayfasına gidilmeli")
     @Severity(SeverityLevel.MINOR)
     @Story("Navigasyon")
