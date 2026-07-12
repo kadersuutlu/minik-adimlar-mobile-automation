@@ -3,10 +3,12 @@ package tests;
 import io.qameta.allure.*;
 import org.junit.jupiter.api.*;
 
-import base.AppFlowManager;
 import base.BaseTest;
 import data.TestData;
 import utils.AccountCleanupUtil;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,45 +21,19 @@ public class RegisterTest extends BaseTest {
 
     @BeforeEach
     public void setupPage() {
-        AppFlowManager flow = new AppFlowManager(driver,pages);
+        driver.executeScript("mobile: clearApp", Map.of("appId", APP_PACKAGE));
+
+        driver.executeScript("mobile: changePermissions", Map.of(
+                "permissions", List.of("android.permission.POST_NOTIFICATIONS"),
+                "appPackage", APP_PACKAGE,
+                "action", "grant"
+        ));
+
+        driver.activateApp(APP_PACKAGE);
         flow.goToRegister();
     }
 
-
     @Test
-    @Order(1)
-    @DisplayName("Geçerli bilgilerle kayıt olunca ilk bebeğini ekle sayfasına yönlendirilmeli")
-    @Description("Ad, email, telefon ve şifre girilip kayıt olununca ilk bebeğini ekle ekranı görüntülenmeli")
-    @Severity(SeverityLevel.CRITICAL)
-    @Story("Başarılı kayıt")
-    public void successfulRegisterRedirectsToLogin() {
-        registeredEmail = TestData.generateEmail();
-
-        pages.registerPage().fillRegisterForm(
-                TestData.REG_VALID_NAME,
-                registeredEmail,
-                TestData.REG_VALID_PHONE,
-                TestData.REG_VALID_PASSWORD
-        );
-        pages.registerPage().clickRegister();
-
-        assertTrue(pages.addFirstBabyPage().isDisplayed(),
-                "Başarılı kayıt sonrası login sayfası görüntülenmeli");
-    }
-
-    @AfterEach
-    public void cleanupIfNeeded() {
-        if (registeredEmail != null) {
-            AccountCleanupUtil.deleteTestAccount(
-                    registeredEmail,
-                    TestData.REG_VALID_PASSWORD
-            );
-            registeredEmail = null;
-        }
-    }
-
-    @Test
-    @Order(2)
     @DisplayName("Geçersiz email girilince hata mesajı gösterilmeli")
     @Description("Email formatı hatalı girildiğinde validation mesajı görünmeli")
     @Severity(SeverityLevel.NORMAL)
@@ -72,9 +48,7 @@ public class RegisterTest extends BaseTest {
                 "Geçersiz email hata mesajı görüntülenmeli");
     }
 
-
     @Test
-    @Order(3)
     @DisplayName("Boş şifre girilince hata mesajı gösterilmeli")
     @Severity(SeverityLevel.NORMAL)
     @Story("Şifre validasyonu")
@@ -88,7 +62,6 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
-    @Order(4)
     @DisplayName("Kısa şifre girilince minimum uzunluk hatası gösterilmeli")
     @Severity(SeverityLevel.NORMAL)
     @Story("Şifre validasyonu")
@@ -107,7 +80,6 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
-    @Order(5)
     @DisplayName("Büyük harf içermeyen şifre girilince hata mesajı gösterilmeli")
     @Severity(SeverityLevel.NORMAL)
     @Story("Şifre validasyonu")
@@ -126,7 +98,6 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
-    @Order(6)
     @DisplayName("Küçük harf içermeyen şifre girilince hata mesajı gösterilmeli")
     @Severity(SeverityLevel.NORMAL)
     @Story("Şifre validasyonu")
@@ -144,14 +115,46 @@ public class RegisterTest extends BaseTest {
                 "Küçük harf hata mesajı görüntülenmeli");
     }
 
-
     @Test
-    @Order(7)
     @DisplayName("Form boşken kayıt ol butonu disabled olmalı")
     @Severity(SeverityLevel.MINOR)
     @Story("Buton durumu")
     public void registerButtonDisabledWhenFormEmpty() {
         assertFalse(pages.registerPage().isRegisterButtonEnabled(),
                 "Form boşken kayıt ol butonu disabled olmalı");
+    }
+
+    @Test
+    @DisplayName("Geçerli bilgilerle kayıt olunca ilk bebeğini ekle sayfasına yönlendirilmeli")
+    @Description("Ad, email, telefon ve şifre girilip kayıt olununca ilk bebeğini ekle ekranı görüntülenmeli")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Başarılı kayıt")
+    public void successfulRegisterRedirectsToAddFirstBabyPage() {
+        registeredEmail = TestData.generateEmail();
+
+        pages.registerPage().fillRegisterForm(
+                TestData.REG_VALID_NAME,
+                registeredEmail,
+                TestData.REG_VALID_PHONE,
+                TestData.REG_VALID_PASSWORD
+        );
+        pages.registerPage().clickRegister();
+
+        pages.registerPage().dismissSuccessDialog();
+        pages.registerPage().dismissAutofillSavePopupIfPresent();
+
+        assertTrue(pages.addFirstBabyPage().isDisplayed(),
+                "Başarılı kayıt sonrası ilk bebeğini ekle sayfası görüntülenmeli");
+    }
+
+    @AfterEach
+    public void cleanupIfNeeded() {
+        if (registeredEmail != null) {
+            AccountCleanupUtil.deleteTestAccount(
+                    registeredEmail,
+                    TestData.REG_VALID_PASSWORD
+            );
+            registeredEmail = null;
+        }
     }
 }

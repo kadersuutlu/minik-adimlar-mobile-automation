@@ -4,6 +4,7 @@ import java.time.Duration;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -35,6 +36,16 @@ public abstract class BasePage {
             return driver.findElement(locator).isDisplayed();
         } catch (NoSuchElementException e) {
             return false;
+        }
+    }
+
+    public void dismissAutofillSavePopupIfPresent() {
+        try {
+            By autofillCancelButton = By.id("android:id/autofill_save_no");
+            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+            shortWait.until(ExpectedConditions.elementToBeClickable(autofillCancelButton)).click();
+        } catch (TimeoutException e) {
+            // Popup çıkmadıysa sorun yok, akışa devam
         }
     }
 }

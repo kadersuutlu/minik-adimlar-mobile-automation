@@ -19,7 +19,7 @@ public class TestData {
     // ===========================
     // Register Module
     // ===========================
-    public static final String REG_VALID_PASSWORD = "Test1234";
+    public static final String REG_VALID_PASSWORD = "Test1234!";
     public static final String REG_VALID_NAME = "Test User";
     public static final String REG_VALID_PHONE = "5551234567";
 
@@ -49,11 +49,11 @@ public class TestData {
     public static final String FP_NEW_PASSWORD = "NewPass123";
     public static final String FP_PASSWORD_MISMATCH = "DiffPass123";
     public static final String FP_EMPTY_PASSWORD = "";
-    
+
     public static final String FP_VALID_TOKEN = "valid_token";
     public static final String FP_EXPIRED_TOKEN = "expired_token";
     public static final String FP_USED_TOKEN = "used_token";
-    
+
     // ===========================
     // Add First Baby Module
     // ===========================

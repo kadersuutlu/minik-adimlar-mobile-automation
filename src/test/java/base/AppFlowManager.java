@@ -7,13 +7,13 @@ import io.appium.java_client.android.AndroidDriver;
 
 public class AppFlowManager {
 
-	private AndroidDriver driver;
-	private PageManager pages;
+    private AndroidDriver driver;
+    private PageManager pages;
 
-	public AppFlowManager(AndroidDriver driver,PageManager pages) {
-		this.driver = driver;
-		this.pages = pages;
-	}
+    public AppFlowManager(AndroidDriver driver, PageManager pages) {
+        this.driver = driver;
+        this.pages = pages;
+    }
 
     private void passWelcomeScreenIfPresent() {
         if (isElementPresent(AppiumBy.accessibilityId("welcome_continue_button"))) {
@@ -35,10 +35,10 @@ public class AppFlowManager {
         }
     }
 
-	/**
-	 * Ana sayfa açıldıktan sonra çıkan 8 adımlık (7 Next + 1 Done) onboarding
-	 * rehberini dinamik olarak geçer.
-	 */
+    /**
+     * Ana sayfa açıldıktan sonra çıkan 8 adımlık (7 Next + 1 Done) onboarding
+     * rehberini dinamik olarak geçer.
+     */
     public void passMainOnboarding() {
         int safetyCounter = 0;
         boolean finished = false;
@@ -64,18 +64,18 @@ public class AppFlowManager {
         }
     }
 
-	// Tek bir komutla Login olur ve tüm onboarding adımlarını temizler.
-	public void loginAndCleanStart(String email, String pass) {
-		goToLogin();
-		pages.loginPage().fillLoginForm(email, pass);
-		driver.hideKeyboard();
-		pages.loginPage().clickLogin();
+    // Tek bir komutla Login olur ve tüm onboarding adımlarını temizler.
+    public void loginAndCleanStart(String email, String pass) {
+        goToLogin();
+        pages.loginPage().fillLoginForm(email, pass);
+        driver.hideKeyboard();
+        pages.loginPage().clickLogin();
 
-		passMainOnboarding();
-	}
+        passMainOnboarding();
+    }
 
-	// Yardımcı metot: Element var mı kontrolü (Hızlı kontrol için)
-	private boolean isElementPresent(By by) {
-		return driver.findElements(by).size() > 0;
-	}
+    // Yardımcı metot: Element var mı kontrolü (Hızlı kontrol için)
+    private boolean isElementPresent(By by) {
+        return driver.findElements(by).size() > 0;
+    }
 }

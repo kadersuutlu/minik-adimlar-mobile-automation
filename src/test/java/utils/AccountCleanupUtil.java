@@ -1,5 +1,6 @@
 package utils;
 
+import io.qameta.allure.Allure;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -24,8 +25,9 @@ public class AccountCleanupUtil {
                 .response();
 
         if (loginResponse.statusCode() != 200) {
-            System.out.println("Cleanup: Login başarısız, hesap silinemedi. Status: "
-                    + loginResponse.statusCode());
+            String warning = "Cleanup: Login başarısız, hesap silinemedi. Status: " + loginResponse.statusCode() + " Email: " + email;
+            System.out.println(warning);
+            Allure.addAttachment("Cleanup Warning", warning);
             return;
         }
 
