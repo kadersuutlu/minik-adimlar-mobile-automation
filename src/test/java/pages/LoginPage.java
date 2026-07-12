@@ -15,20 +15,20 @@ public class LoginPage extends BasePage{
 		System.out.println("Giriş Yap initialized");
 	}
 
-	private By loginHeader = AppiumBy.accessibilityId("signin_title");
+    private By loginHeader = AppiumBy.accessibilityId("signin_title");
 
-	private By emailField = AppiumBy.accessibilityId("signin_email_input");
-	private By passwordField = AppiumBy.accessibilityId("signin_password_input");
+    private By emailField = AppiumBy.accessibilityId("signin_email_input");
+    private By passwordField = AppiumBy.accessibilityId("signin_password_input");
     private By loginButton = AppiumBy.accessibilityId("signin_continue_button");
     private By goToSignUpButton = AppiumBy.accessibilityId("signin_go_to_signup_button");
 
-	private By passwordVisibilityIcon = AppiumBy
-			.xpath("//*[contains(@resource-id,'signin_password_input_visibility_icon')]");
+    private By passwordVisibilityIcon = AppiumBy
+            .xpath("//*[contains(@resource-id,'signin_password_input_visibility_icon')]");
 
-	private By forgotPasswordText = AppiumBy.accessibilityId("signin_forgot_password_text");
+    private By forgotPasswordText = AppiumBy.accessibilityId("signin_forgot_password_text");
 
-	private By emailError = By.xpath("//android.widget.TextView[@text='Bu e-mail adresi kayıtlı değil.']");
-	private By passwordError = By.xpath("//android.widget.TextView[@text='Şifrenizi eksik ya da hatalı girdiniz.']");
+    private By emailError = By.xpath("//android.widget.TextView[@text='Bu e-mail adresi kayıtlı değil.']");
+    private By passwordError = By.xpath("//android.widget.TextView[@text='Şifrenizi eksik ya da hatalı girdiniz.']");
 
     private final By errorDialogTitle = By.id("com.juniors.minikadimlar:id/alert_title");
     private final By errorDialogOkButton = By.id("android:id/button1");
@@ -50,22 +50,22 @@ public class LoginPage extends BasePage{
 
     @Step("Giriş yap butonuna tıklandı")
     public void clickLogin() {
-        wait.until(ExpectedConditions.elementToBeClickable(loginButton)).click();
+        click(loginButton);
     }
 
     @Step("Şifremi unuttum butonuna tıklandı")
     public void clickForgotPassword() {
-        wait.until(ExpectedConditions.elementToBeClickable(forgotPasswordText)).click();
+        click(forgotPasswordText);
     }
 
     @Step("Şifre görünürlük ikonuna tıklandı")
     public void clickPasswordVisibility() {
-        wait.until(ExpectedConditions.elementToBeClickable(passwordVisibilityIcon)).click();
+        click(passwordVisibilityIcon);
     }
 
     @Step("Kayıt ol sayfasına git butonuna tıklandı")
     public void clickGoToSignUp() {
-        wait.until(ExpectedConditions.elementToBeClickable(goToSignUpButton)).click();
+        click(goToSignUpButton);
     }
 
     @Step("Login formu dolduruldu")
@@ -74,10 +74,9 @@ public class LoginPage extends BasePage{
         enterPassword(password);
     }
 
-    // Getters
     @Step("Login butonu aktif mi kontrol ediliyor")
     public boolean isLoginButtonEnabled() {
-        return driver.findElement(loginButton).isEnabled();
+        return wait.until(ExpectedConditions.presenceOfElementLocated(loginButton)).isEnabled();
     }
 
     @Step("Şifre field metni alındı")
@@ -102,6 +101,6 @@ public class LoginPage extends BasePage{
 
     @Step("Hata dialog'u kapatıldı")
     public void dismissErrorDialog() {
-        wait.until(ExpectedConditions.elementToBeClickable(errorDialogOkButton)).click();
+        click(errorDialogOkButton);
     }
 }

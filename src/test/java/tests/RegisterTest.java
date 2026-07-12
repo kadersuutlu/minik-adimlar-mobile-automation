@@ -21,13 +21,7 @@ public class RegisterTest extends BaseTest {
 
     @BeforeEach
     public void setupPage() {
-        driver.executeScript("mobile: clearApp", Map.of("appId", APP_PACKAGE));
-
-        driver.executeScript("mobile: changePermissions", Map.of(
-                "permissions", List.of("android.permission.POST_NOTIFICATIONS"),
-                "appPackage", APP_PACKAGE,
-                "action", "grant"
-        ));
+        resetApp();
 
         driver.activateApp(APP_PACKAGE);
         flow.goToRegister();
@@ -113,6 +107,24 @@ public class RegisterTest extends BaseTest {
 
         assertTrue(pages.registerPage().getPasswordLowercaseErrorText().contains("küçük harf"),
                 "Küçük harf hata mesajı görüntülenmeli");
+    }
+
+    @Test
+    @DisplayName("Özel karakter içermeyen şifre girilince hata mesajı gösterilmeli")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Şifre validasyonu")
+    public void registerWithPasswordWithoutSpecialCharShowsError() {
+        pages.registerPage().enterName(TestData.REG_VALID_NAME);
+        driver.hideKeyboard();
+        pages.registerPage().enterEmail(TestData.generateEmail());
+        driver.hideKeyboard();
+        pages.registerPage().enterPhone(TestData.REG_VALID_PHONE);
+        driver.hideKeyboard();
+        pages.registerPage().enterPassword(TestData.REG_NO_SPECIAL_CHAR_PASSWORD);
+        driver.hideKeyboard();
+
+        assertTrue(pages.registerPage().getPasswordSpecialCharErrorText().contains("özel karakter"),
+                "Özel karakter hata mesajı görüntülenmeli");
     }
 
     @Test

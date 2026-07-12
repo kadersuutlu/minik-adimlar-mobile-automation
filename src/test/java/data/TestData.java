@@ -28,10 +28,17 @@ public class TestData {
     public static final String REG_SHORT_PASSWORD = "Abc12";
     public static final String REG_NO_UPPERCASE_PASSWORD = "test123";
     public static final String REG_NO_LOWERCASE_PASSWORD = "TEST123";
+    public static final String REG_NO_SPECIAL_CHAR_PASSWORD = "Test1234";
 
     // ===========================
     // Login Module
     // ===========================
+
+    public static final String LOG_USER_WITH_BABY_EMAIL = "kullanici_bebekli@test.com";
+    public static final String LOG_USER_WITH_BABY_PASSWORD = "Test1234";
+
+    public static final String LOG_USER_WITHOUT_BABY_EMAIL = "kullanici_bebeksiz@test.com";
+    public static final String LOG_USER_WITHOUT_BABY_PASSWORD = "Test1234";
 
     public static final String LOG_INVALID_EMAIL_FORMAT = "invalid_email_format";
     public static final String LOG_WRONG_PASSWORD = "WrongPass1";

@@ -32,6 +32,7 @@ public class RegisterPage extends BasePage {
     private By passwordUppercaseError = By.xpath("//android.widget.TextView[@text='Şifre en az 1 büyük harf içermelidir.']");
     private By passwordLowercaseError = By.xpath("//android.widget.TextView[@text='Şifre en az 1 küçük harf içermelidir.']");
     private By passwordEmptyError = By.xpath("//android.widget.TextView[@text='Şifre zorunludur.']");
+    private By passwordSpecialCharError = By.xpath("//android.widget.TextView[@text='Şifre en az 1 özel karakter içermelidir.']");
 
     private By successDialogContinueButton = By.id("android:id/button1");
 
@@ -103,6 +104,11 @@ public class RegisterPage extends BasePage {
     @Step("Şifre küçük harf hata mesajı alındı")
     public String getPasswordLowercaseErrorText() {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordLowercaseError)).getText();
+    }
+
+    @Step("Şifre özel karakter hata mesajı alındı")
+    public String getPasswordSpecialCharErrorText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(passwordSpecialCharError)).getText();
     }
 
     @Step("Kayıt başarılı popup'ı kapatıldı")

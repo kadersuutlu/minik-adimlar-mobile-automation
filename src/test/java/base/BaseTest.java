@@ -2,6 +2,8 @@ package base;
 
 import java.net.URL;
 import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.*;
 
@@ -53,6 +55,16 @@ public class BaseTest {
 
         pages = new PageManager(driver);
         flow = new AppFlowManager(driver, pages);
+    }
+
+    protected void resetApp() {
+        driver.executeScript("mobile: clearApp", Map.of("appId", APP_PACKAGE));
+        driver.executeScript("mobile: changePermissions", Map.of(
+                "permissions", List.of("android.permission.POST_NOTIFICATIONS"),
+                "appPackage", APP_PACKAGE,
+                "action", "grant"
+        ));
+        driver.activateApp(APP_PACKAGE);
     }
 
     @AfterAll
