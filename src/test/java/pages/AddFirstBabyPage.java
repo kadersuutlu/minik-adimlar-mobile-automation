@@ -1,11 +1,16 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import base.BasePage;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class AddFirstBabyPage extends BasePage{
 
@@ -14,89 +19,127 @@ public class AddFirstBabyPage extends BasePage{
 		System.out.println("İlk Bebeğini Ekle initialized");
 	}
 
-	By addBabyTitle = AppiumBy.accessibilityId("add_baby_title");
+    By addBabyTitle = AppiumBy.accessibilityId("add_baby_title");
 
-	private By babyPhoto = AppiumBy.accessibilityId("add_baby_photo");
-	private By babyPhotoAddIcon = AppiumBy.accessibilityId("add_baby_photo_add_icon");
-	private By babyPhotoTakePhoto = AppiumBy.accessibilityId("add_baby_photo_take_photo_text");
-	private By babyPhotoChooseGallery = AppiumBy.accessibilityId("add_baby_photo_choose_gallery_text");
+    private By photoAddIcon = AppiumBy.accessibilityId("add_baby_photo");
+    private By takePhotoOption = By.xpath("//android.view.ViewGroup[@content-desc=\"add_baby_photo_take_photo_text\"]");
+    private By chooseGalleryOption = By.xpath("//android.view.ViewGroup[@content-desc=\"add_baby_photo_choose_gallery_text\"]");
 
-	private By babyNameInput = AppiumBy.accessibilityId("add_baby_name_input");
-	private By babyBirthdateInput = AppiumBy.accessibilityId("add_baby_birthdate_input");
+    private By permissionAllowButton = By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button");
+    private By permissionDenyButton = By.id("com.android.permissioncontroller:id/permission_deny_button");
 
-	private By babyGenderGirl = AppiumBy.accessibilityId("add_baby_gender_girl");
-	private By BabyGenderBoy = AppiumBy.accessibilityId("add_baby_gender_boy");
-	
-	private By babyRelationShipDropdown = AppiumBy.accessibilityId("add_baby_relationship_dropdown");
-	private By babyMother = AppiumBy.accessibilityId("Anne");
-	private By babyFather = AppiumBy.accessibilityId("Baba");
-	private By babyCareGiver = AppiumBy.accessibilityId("Bakıcı");
-	private By babyOther = AppiumBy.accessibilityId("Diğer");
+    private By babyNameInput = AppiumBy.accessibilityId("add_baby_name_input");
+    private By babyBirthdateInput = AppiumBy.accessibilityId("add_baby_birthdate_input");
 
-	private By babySubmitButton = AppiumBy.accessibilityId("add_baby_submit_button");
+    private By babyGenderGirl = AppiumBy.accessibilityId("add_baby_gender_girl");
+    private By BabyGenderBoy = AppiumBy.accessibilityId("add_baby_gender_boy");
 
-	public boolean isDisplayed() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(addBabyTitle)).isDisplayed();
-	}
+    private By babyRelationShipDropdown = AppiumBy.accessibilityId("add_baby_relationship_dropdown");
+    private By babyMother = AppiumBy.accessibilityId("add_baby_relationship_dropdown_option_0");
+    private By babyFather = AppiumBy.accessibilityId("add_baby_relationship_dropdown_option_1");
+    private By babyCareGiver = AppiumBy.accessibilityId("add_baby_relationship_dropdown_option_2");
+    private By babyOther = AppiumBy.accessibilityId("add_baby_relationship_dropdown_option_3");
 
-	public void enterBabyName(String name) {
-		driver.findElement(babyNameInput).click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(babyNameInput)).sendKeys(name);
-	}
+    private By babySubmitButton = AppiumBy.accessibilityId("add_baby_submit_button");
 
-	public void enterBirthDate(String date) {
-		driver.findElement(babyBirthdateInput).click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(babyBirthdateInput)).sendKeys(date);
-	}
+    @Step("İlk bebeğini ekle sayfasının görüntülendiği doğrulanıyor")
+    public boolean isDisplayed() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(addBabyTitle)).isDisplayed();
+    }
 
-	public void selectGirl() {
-		wait.until(ExpectedConditions.elementToBeClickable(babyGenderGirl)).click();
-	}
+    @Step("Bebek fotoğrafı ikonuna tıklandı")
+    public void clickPhotoAddIcon() {
+        click(photoAddIcon);
+    }
 
-	public void selectBoy() {
-		wait.until(ExpectedConditions.elementToBeClickable(BabyGenderBoy)).click();
-	}
-	
-	public void selectRelationship(String type) {
-	    wait.until(ExpectedConditions.elementToBeClickable(babyRelationShipDropdown)).click();
+    @Step("Kamera ile çek seçeneğine tıklandı")
+    public void clickTakePhotoOption() {
+        click(takePhotoOption);
+    }
 
-	    switch (type.toLowerCase()) {
-	        case "anne":
-	            wait.until(ExpectedConditions.elementToBeClickable(babyMother)).click();
-	            break;
-	        case "baba":
-	            wait.until(ExpectedConditions.elementToBeClickable(babyFather)).click();
-	            break;
-	        case "bakıcı":
-	            wait.until(ExpectedConditions.elementToBeClickable(babyCareGiver)).click();
-	            break;
-	        case "diğer":
-	            wait.until(ExpectedConditions.elementToBeClickable(babyOther)).click();
-	            break;
-	    }
-	}
+    @Step("Galeriden seç seçeneğine tıklandı")
+    public void clickChooseGalleryOption() {
+        click(chooseGalleryOption);
+    }
 
+    @Step("İzin popup'ı görüntüleniyor mu kontrol ediliyor")
+    public boolean isPermissionDialogDisplayed() {
+        try {
+            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+            return shortWait.until(ExpectedConditions.visibilityOfElementLocated(permissionAllowButton)) != null;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
 
-	public void clickSubmit() {
-		wait.until(ExpectedConditions.elementToBeClickable(babySubmitButton)).click();
-	}
+    @Step("İzin verildi")
+    public void grantPermission() {
+        click(permissionAllowButton);
+    }
 
-	public boolean isSubmitButtonEnabled() {
-		return driver.findElement(babySubmitButton).isEnabled();
-	}
+    @Step("Bebek adı girildi: {name}")
+    public void enterBabyName(String name) {
+        clickAndSendKeys(babyNameInput, name);
+    }
 
-	public void fillBabyForm(String name, String birthDate, String gender) {
-		enterBabyName(name);
-		driver.hideKeyboard();
-		enterBirthDate(birthDate);
-		driver.hideKeyboard();
+    @Step("Doğum tarihi girildi: {date}")
+    public void enterBirthDate(String date) {
+        clickAndSendKeys(babyBirthdateInput, date);
+    }
 
-		if (gender.equalsIgnoreCase("girl")) {
-			selectGirl();
-		} else {
-			selectBoy();
-		}
-		
-		selectRelationship("anne");
-	}
+    @Step("Kız cinsiyeti seçildi")
+    public void selectGirl() {
+        click(babyGenderGirl);
+    }
+
+    @Step("Erkek cinsiyeti seçildi")
+    public void selectBoy() {
+        click(BabyGenderBoy);
+    }
+
+    @Step("İlişki türü seçildi: {type}")
+    public void selectRelationship(String type) {
+        click(babyRelationShipDropdown);
+
+        switch (type.toLowerCase()) {
+            case "anne":
+                click(babyMother);
+                break;
+            case "baba":
+                click(babyFather);
+                break;
+            case "bakıcı":
+                click(babyCareGiver);
+                break;
+            case "diğer":
+                click(babyOther);
+                break;
+        }
+    }
+
+    @Step("Kaydet butonuna tıklandı")
+    public void clickSubmit() {
+        click(babySubmitButton);
+    }
+
+    @Step("Kaydet butonu aktif mi kontrol ediliyor")
+    public boolean isSubmitButtonEnabled() {
+        return wait.until(ExpectedConditions.presenceOfElementLocated(babySubmitButton)).isEnabled();
+    }
+
+    @Step("Bebek formu dolduruldu")
+    public void fillBabyForm(String name, String birthDate, String gender) {
+        enterBabyName(name);
+        driver.hideKeyboard();
+        enterBirthDate(birthDate);
+        driver.hideKeyboard();
+
+        if (gender.equalsIgnoreCase("girl")) {
+            selectGirl();
+        } else {
+            selectBoy();
+        }
+
+        selectRelationship("anne");
+    }
 }
