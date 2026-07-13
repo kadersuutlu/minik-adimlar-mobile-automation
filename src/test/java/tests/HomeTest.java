@@ -13,6 +13,10 @@ import api.ContentApi;
 import base.AppFlowManager;
 import base.BaseTest;
 import data.TestData;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.List;
 
 @Feature("Ana Sayfa")
 public class HomeTest extends BaseTest {
@@ -35,42 +39,28 @@ public class HomeTest extends BaseTest {
         assertTrue(pages.homePage().isDisplayed(), "Ana sayfaya geri dönülemedi!");
     }
 
-    @Test
-    @Disabled("UI ile API'den gelen içerik sıralaması eşleşmiyor, backend ile netleştirilecek")
-    @DisplayName("Bebek içeriği tümünü gör, API ile eşleşmeli")
+    @ParameterizedTest(name = "Kategori: {0} - Ana sayfada tümünü gör butonuna basılınca içerikler API listesiyle uyuşmalı")
+    @DisplayName("Ana Sayfa Tümünü Gör API Doğrulama Testi")
+    @ValueSource(strings = {"BABY", "PARENT"})
     @Severity(SeverityLevel.NORMAL)
     @Story("İçerik doğrulama")
-    public void babyContentShouldMatchApi() {
-        pages.homePage().clickHomeBabyContentSeeAllText();
+    public void homeSeeAllContentsShouldMatchApi(String audience) {
+        if (audience.equals("BABY")) {
+            pages.homePage().clickHomeBabyContentSeeAllText();
+        } else if (audience.equals("PARENT")) {
+            pages.homePage().clickHomeParentContentSeeAllText();
+        }
 
         String uiTitle = pages.contentsPage().getFirstContentTitle();
 
-        String apiTitle = ContentApi.getFirstContentTitleByAudience(
-                "BABY",
+        List<String> apiTitles = ContentApi.getContentTitlesByAudience(
+                audience,
                 TestData.LOG_USER_WITH_BABY_EMAIL,
                 TestData.LOG_USER_WITH_BABY_PASSWORD
         );
 
-        assertEquals(uiTitle, apiTitle);
-    }
-
-    @Test
-    @Disabled("UI ile API'den gelen içerik sıralaması eşleşmiyor, backend ile netleştirilecek")
-    @DisplayName("Ebeveyn içeriği tümünü gör, API ile eşleşmeli")
-    @Severity(SeverityLevel.NORMAL)
-    @Story("İçerik doğrulama")
-    public void parentContentsShouldMatchApi() {
-        pages.homePage().clickHomeParentContentSeeAllText();
-
-        String uiTitle = pages.contentsPage().getFirstContentTitle();
-
-        String apiTitle = ContentApi.getFirstContentTitleByAudience(
-                "PARENT",
-                TestData.LOG_USER_WITH_BABY_EMAIL,
-                TestData.LOG_USER_WITH_BABY_PASSWORD
-        );
-
-        assertEquals(uiTitle, apiTitle);
+        assertTrue(apiTitles.contains(uiTitle),
+                audience + " kategorisindeki '" + uiTitle + "' içeriği Ana Sayfa Tümünü Gör listesinde bulunamadı!");
     }
 
     @Test
