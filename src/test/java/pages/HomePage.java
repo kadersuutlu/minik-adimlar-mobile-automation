@@ -1,11 +1,18 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import base.BasePage;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class HomePage extends BasePage {
 
@@ -14,45 +21,58 @@ public class HomePage extends BasePage {
 		System.out.println("Anasayfa initialized");
 	}
 
-	// Ana sayfanın yüklendiğini doğrulamak için en güvenilir element
-	private final By homeHeader = AppiumBy.accessibilityId("home_baby_feeling_card");
+    private final WebDriverWait longWait = new WebDriverWait(driver, Duration.ofSeconds(30));
 
-	/**
-	 * Profil ikonu için XPath kullanımı (Eğer accessibilityId eklendiyse onunla
-	 * değiştirilmesi önerilir)
-	 */
-	private final By profileIcon = By.xpath("//com.horcrux.svg.RectView[2]");
+    private final By homeHeader = AppiumBy.accessibilityId("home_baby_feeling_card");
 
-	private final By homeBabyFeelingCard = AppiumBy.accessibilityId("Bebeğiniz Bugün Nasıl?");
-	private final By homeNotificationIcon = AppiumBy.accessibilityId("home_notification_icon");
-	private final By homeBabyContentSeeAllText = AppiumBy.accessibilityId("home_baby_content_see_all_text");
-	private final By homeParentContentSeeAllText = AppiumBy.accessibilityId("home_parent_content_see_all_text");
-	private final By homeBabyCardAddIcon = AppiumBy.accessibilityId("home_baby_card_add_icon");
+    private final By profileIcon = By.xpath("//com.horcrux.svg.RectView[2]");
 
-	// Alt Menü Navigasyon
-	private final By navigationContents = AppiumBy.accessibilityId("İçerikler");
-	private final By navigationHome = AppiumBy.accessibilityId("Ana Sayfa");
-	private final By navigationMyBaby = AppiumBy.accessibilityId("Bebeğim");
-	private final By navigationSchedule = AppiumBy.accessibilityId("Takvim");
+    private final By homeBabyFeelingCard = AppiumBy.accessibilityId("Bebeğiniz Bugün Nasıl?");
+    private final By homeNotificationIcon = AppiumBy.accessibilityId("home_notification_icon");
+    private final By homeBabyContentSeeAllText = AppiumBy.accessibilityId("home_baby_content_see_all_text");
+    private final By homeParentContentSeeAllText = AppiumBy.accessibilityId("home_parent_content_see_all_text");
+    private final By homeBabyCardAddIcon = AppiumBy.accessibilityId("home_baby_card_add_icon");
 
-	// Onboarding Butonları
-	private final By onboardingNextButton = AppiumBy.accessibilityId("onboarding_next_button");
-	private final By onboardingDoneButton = AppiumBy.accessibilityId("onboarding_done_button");
+    // Alt Menü Navigasyon
+    private final By navigationContents = AppiumBy.accessibilityId("İçerikler");
+    private final By navigationHome = AppiumBy.accessibilityId("Ana Sayfa");
+    private final By navigationMyBaby = AppiumBy.accessibilityId("Bebeğim");
+    private final By navigationSchedule = AppiumBy.accessibilityId("Takvim");
 
-	// Sayfanın yüklendiğini kontrol eder.
-	public boolean isDisplayed() {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(homeHeader)).isDisplayed();
-	}
+    // Onboarding Butonları
+    private final By onboardingNextButton = AppiumBy.accessibilityId("onboarding_next_button");
+    private final By onboardingDoneButton = AppiumBy.accessibilityId("onboarding_done_button");
 
-	public void waitForHomePage() {
-		wait.until(ExpectedConditions.visibilityOfElementLocated(homeHeader));
-	}
+    @Step("Ana sayfanın görüntülendiği doğrulanıyor")
+    public boolean isDisplayed() {
+        int attempts = 0;
+        while (attempts < 3) {
+            try {
+                return longWait.until(ExpectedConditions.visibilityOfElementLocated(homeHeader)).isDisplayed();
+            } catch (StaleElementReferenceException e) {
+                attempts++;
+            }
+        }
+        throw new StaleElementReferenceException("Ana sayfa elementi 3 denemede stabilize olmadı: " + homeHeader);
+    }
 
-	/**
-	 * Onboarding durumunu kontrol eder. Döngü içinde hızlı çalışması için
-	 * findElements kullanılmıştır.
-	 */
+    @Step("Ana sayfanın yüklenmesi bekleniyor")
+    public void waitForHomePage() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(homeHeader));
+    }
+
+    @Step("Onboarding durumu kontrol ediliyor")
     public int getOnboardingStatus() {
+        try {
+            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(4));
+            shortWait.until(driver ->
+                    !driver.findElements(onboardingNextButton).isEmpty()
+                            || !driver.findElements(onboardingDoneButton).isEmpty()
+            );
+        } catch (TimeoutException e) {
+            // 4 saniyede onboarding hiç gelmediyse, gerçekten yok demektir
+        }
+
         if (!driver.findElements(onboardingNextButton).isEmpty()) {
             return 1;
         } else if (!driver.findElements(onboardingDoneButton).isEmpty()) {
@@ -61,59 +81,63 @@ public class HomePage extends BasePage {
         return 0;
     }
 
+    @Step("Onboarding sonraki butonuna tıklandı")
     public void clickOnboardingNext() {
-        wait.until(ExpectedConditions.elementToBeClickable(onboardingNextButton)).click();
-        // tıklama sonrası ekranın güncellenmesini bekle
-        wait.until(driver ->
-                driver.findElements(onboardingNextButton).isEmpty()
-                        || driver.findElements(onboardingDoneButton).size() > 0
-                        || true // aşağıdaki nottaki gibi düzelt
-        );
+        click(onboardingNextButton);
     }
 
+    @Step("Onboarding tamamla butonuna tıklandı")
     public void clickOnboardingDone() {
-        wait.until(ExpectedConditions.elementToBeClickable(onboardingDoneButton)).click();
+        click(onboardingDoneButton);
     }
 
-	// --- Tıklama Aksiyonları ---
+    @Step("Profil ikonuna tıklandı")
+    public void clickProfileIcon() {
+        click(profileIcon);
+    }
 
-	public void clickProfileIcon() {
-		wait.until(ExpectedConditions.elementToBeClickable(profileIcon)).click();
-	}
+    @Step("Bebeğiniz bugün nasıl kartına tıklandı")
+    public void clickHomeBabyFeelingCard() {
+        click(homeBabyFeelingCard);
+    }
 
-	public void clickHomeBabyFeelingCard() {
-		wait.until(ExpectedConditions.elementToBeClickable(homeBabyFeelingCard)).click();
-	}
+    @Step("Bildirim ikonuna tıklandı")
+    public void clickHomeNotificationIcon() {
+        click(homeNotificationIcon);
+    }
 
-	public void clickHomeNotificationIcon() {
-		wait.until(ExpectedConditions.elementToBeClickable(homeNotificationIcon)).click();
-	}
+    @Step("Bebek içeriği tümünü gör metnine tıklandı")
+    public void clickHomeBabyContentSeeAllText() {
+        click(homeBabyContentSeeAllText);
+    }
 
-	public void clickHomeBabyContentSeeAllText() {
-		wait.until(ExpectedConditions.elementToBeClickable(homeBabyContentSeeAllText)).click();
-	}
+    @Step("Ebeveyn içeriği tümünü gör metnine tıklandı")
+    public void clickHomeParentContentSeeAllText() {
+        click(homeParentContentSeeAllText);
+    }
 
-	public void clickHomeParentContentSeeAllText() {
-		wait.until(ExpectedConditions.elementToBeClickable(homeParentContentSeeAllText)).click();
-	}
+    @Step("Bebek ekle ikonuna tıklandı")
+    public void clickHomeBabyCardAddIcon() {
+        click(homeBabyCardAddIcon);
+    }
 
-	public void clickHomeBabyCardAddIcon() {
-		wait.until(ExpectedConditions.elementToBeClickable(homeBabyCardAddIcon)).click();
-	}
+    @Step("İçerikler navigasyonuna tıklandı")
+    public void clickNavigationContents() {
+        click(navigationContents);
+    }
 
-	public void clickNavigationContents() {
-		wait.until(ExpectedConditions.elementToBeClickable(navigationContents)).click();
-	}
+    @Step("Ana sayfa navigasyonuna tıklandı")
+    public void clickNavigationHome() {
+        click(navigationHome);
+    }
 
-	public void clickNavigationHome() {
-		wait.until(ExpectedConditions.elementToBeClickable(navigationHome)).click();
-	}
+    @Step("Bebeğim navigasyonuna tıklandı")
+    public void clickNavigationMyBaby() {
+        click(navigationMyBaby);
+    }
 
-	public void clickNavigationMyBaby() {
-		wait.until(ExpectedConditions.elementToBeClickable(navigationMyBaby)).click();
-	}
-
-	public void clickNavigationSchedule() {
-		wait.until(ExpectedConditions.elementToBeClickable(navigationSchedule)).click();
-	}
+    @Step("Takvim navigasyonuna tıklandı")
+    public void clickNavigationSchedule() {
+        click(navigationSchedule);
+    }
 }

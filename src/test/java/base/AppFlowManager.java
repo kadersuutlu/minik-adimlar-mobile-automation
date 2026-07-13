@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.TimeoutException;
 
 public class AppFlowManager {
 
@@ -46,16 +47,22 @@ public class AppFlowManager {
         while (safetyCounter < 15) {
             int status = pages.homePage().getOnboardingStatus();
 
-            if (status == 1) {
-                pages.homePage().clickOnboardingNext();
-            } else if (status == 2) {
-                pages.homePage().clickOnboardingDone();
-                finished = true;
-                break;
-            } else {
-                finished = true;
-                break;
+            try {
+                if (status == 1) {
+                    pages.homePage().clickOnboardingNext();
+                } else if (status == 2) {
+                    pages.homePage().clickOnboardingDone();
+                    finished = true;
+                    break;
+                } else {
+                    finished = true;
+                    break;
+                }
+            } catch (TimeoutException e) {
+                // Buton, kontrol ile tıklama arasında kaybolmuş olabilir (son adım geçişi).
+                // Döngü bir sonraki turda durumu yeniden kontrol edecek.
             }
+
             safetyCounter++;
         }
 

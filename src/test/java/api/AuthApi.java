@@ -3,22 +3,25 @@ package api;
 import static io.restassured.RestAssured.given;
 
 import io.restassured.response.Response;
+import utils.ConfigReader;
 
 public class AuthApi {
 
-	private static final String BASE_URL = System.getProperty("baseUrl");
+    public static String getAccessToken(String email, String password) {
+        String baseUrl = ConfigReader.get("api.base.url");
 
-	String email = "test" + System.currentTimeMillis() + "@gmail.com";
-	
-	public static String getAccessToken() {
+        String body = String.format("{\"email\": \"%s\", \"password\": \"%s\"}", email, password);
 
-		return given().baseUri(BASE_URL).contentType("application/json").body("""
-				  {
-				    "email": "unique_user1@test.com",
-				    "password": "NewPass123"
-				  }
-				""").when().post("/api/auth/login").then().statusCode(200).extract().jsonPath()
-				.getString("accessToken");
-	}
-
+        return given()
+                .baseUri(baseUrl)
+                .contentType("application/json")
+                .body(body)
+                .when()
+                .post("/api/auth/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .jsonPath()
+                .getString("accessToken");
+    }
 }
