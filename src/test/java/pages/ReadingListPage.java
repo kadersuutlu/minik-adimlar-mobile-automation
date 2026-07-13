@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -32,6 +33,8 @@ public class ReadingListPage extends BasePage {
 
     private final By emptyParent =
             AppiumBy.accessibilityId("reading_list_empty_text_parent");
+
+    private By reading_list_back_button = AppiumBy.accessibilityId("reading_list_back_button");
 
     public boolean isDisplayed() {
         return wait.until(
@@ -159,5 +162,10 @@ public class ReadingListPage extends BasePage {
         return wait.until(
                 ExpectedConditions.visibilityOfElementLocated(emptyParent)
         ).getText();
+    }
+
+    @Step("Okuma listesi ekranından içerikler ekranına geri dönüldü")
+    public void clickBBackToContentsPage() {
+        click(reading_list_back_button);
     }
 }
