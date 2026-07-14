@@ -25,6 +25,22 @@ public class ContentApi {
                 .getList("[0].data.title");
     }
 
+    public static void addContentToReadingList(String audience, int contentId, String email, String password) {
+        String baseUrl = ConfigReader.get("api.base.url");
+        String token = AuthApi.getAccessToken(email, password);
+
+        given()
+                .baseUri(baseUrl)
+                .header("Authorization", "Bearer " + token)
+                .log().all()
+                .contentType("application/json")
+                .body("{ \"contentId\": " + contentId + " }")
+                .when()
+                .post("/api/reading-list")
+                .then()
+                .statusCode(201);
+    }
+
     public static List<Integer> getReadingListContentIds(String audience, String email, String password) {
         String baseUrl = ConfigReader.get("api.base.url");
         String token = AuthApi.getAccessToken(email, password);
@@ -32,7 +48,7 @@ public class ContentApi {
         return given()
                 .baseUri(baseUrl)
                 .header("Authorization", "Bearer " + token)
-                .queryParam("audience", audience) // BABY veya PARENT
+                .queryParam("audience", audience)
                 .when()
                 .get("/api/reading-list")
                 .then()
@@ -56,7 +72,6 @@ public class ContentApi {
                 .statusCode(200)
                 .extract()
                 .jsonPath()
-                .param("targetTitle", title)
                 .getInt("[0].data.find { it.title == '" + title + "' }.id");
     }
 

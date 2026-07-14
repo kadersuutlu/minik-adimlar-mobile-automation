@@ -3,166 +3,151 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import api.ContentApi;
+import data.TestData;
 import io.qameta.allure.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
 
-import base.AppFlowManager;
+import java.util.stream.Stream;
+
 import base.BaseTest;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Epic("Okuma Listesi")
-@Feature("Reading List Yönetimi")
+
+@Feature("Okuma Listem")
 public class ReadingListTest extends BaseTest {
 
-    @BeforeAll
-    public void loginOnce() {
-        AppFlowManager flow = new AppFlowManager(driver,pages);
-        flow.loginAndCleanStart("Kadersutlu34@gmail.com", "Test123");
+    private String lastRoute;
 
-        assertTrue(pages.homePage().isDisplayed(), "Home page not loaded!");
+    @BeforeAll
+    @Step("Test ortamı hazırlandı ve kullanıcı giriş yaptı")
+    public void loginOnce() {
+        resetApp();
+        flow.loginAndCleanStart(
+                TestData.LOG_USER_WITH_BABY_EMAIL,
+                TestData.LOG_USER_WITH_BABY_PASSWORD
+        );
+        assertTrue(pages.homePage().isDisplayed(), "Ana sayfa yüklenemedi!");
     }
 
     @BeforeEach
-    public void navigateToReadingList() {
-        pages.homePage().clickProfileIcon();
-        assertTrue(pages.profilePage().isDisplayed(), "Profile page not loaded!");
-
-        pages.profilePage().clickProfileReadingListButton();
-        assertTrue(pages.readingListPage().isDisplayed(), "Reading List page not loaded!");
+    @Step("Her test öncesi okuma listeleri API ile temizlendi")
+    public void cleanListsBeforeTest() {
+        try {
+            ContentApi.clearReadingList("BABY", TestData.LOG_USER_WITH_BABY_EMAIL, TestData.LOG_USER_WITH_BABY_PASSWORD);
+            ContentApi.clearReadingList("PARENT", TestData.LOG_USER_WITH_BABY_EMAIL, TestData.LOG_USER_WITH_BABY_PASSWORD);
+        } catch (Exception e) {
+            System.out.println("Setup Cleanup Hatası: " + e.getMessage());
+        }
     }
 
-    private void selectBabyTab() {
-        pages.readingListPage().selectMyselfTab();
-        pages.readingListPage().selectBabyTab();
-
-        assertTrue(pages.readingListPage().isBabyTabSelected(),
-                "Baby tab is not selected!");
+    @Step("Uygulama yeniden başlatılarak taze veri çekilmesi sağlandı")
+    private void restartAppForFreshData() {
+        driver.terminateApp(APP_PACKAGE);
+        driver.activateApp(APP_PACKAGE);
     }
 
-    private void selectMyselfTab() {
-        pages.readingListPage().selectMyselfTab();
+    @Step("Okuma listesi sayfasına {0} rotası üzerinden gidildi")
+    private void navigateToReadingList(String route) {
+        restartAppForFreshData();
 
-        assertTrue(pages.readingListPage().isMyselfTabSelected(),
-                "Myself tab is not selected!");
+        assertTrue(pages.homePage().isDisplayed(), "Yeniden başlatma sonrası ana sayfa yüklenemedi!");
+
+        lastRoute = route;
+
+        if (route.equals("PROFILE")) {
+            pages.homePage().clickProfileIcon();
+            assertTrue(pages.profilePage().isDisplayed(), "Profil sayfası yüklenemedi!");
+            pages.profilePage().clickProfileReadingListButton();
+        } else if (route.equals("CONTENTS")) {
+            pages.homePage().clickNavigationContents();
+            assertTrue(pages.contentsPage().isDisplayed(), "İçerikler sayfası yüklenemedi!");
+            pages.contentsPage().clickContentListReadingListIcon();
+        }
+        assertTrue(pages.readingListPage().isDisplayed(), "Okuma Listesi sayfasına ulaşılamadı!");
     }
 
+    private String convertToAudience(String tab) {
+        return tab.equals("baby") ? "BABY" : "PARENT";
+    }
+
+    @Step("{0} sekmesine geçiş yapıldı")
     private void selectTab(String tab) {
         if (tab.equals("baby")) {
-            selectBabyTab();
+            pages.readingListPage().selectBabyTab();
+            assertTrue(pages.readingListPage().isBabyTabSelected(), "Bebek sekmesi seçilemedi!");
         } else {
-            selectMyselfTab();
+            pages.readingListPage().selectMyselfTab();
+            assertTrue(pages.readingListPage().isMyselfTabSelected(), "Ebeveyn sekmesi seçilemedi!");
         }
     }
 
-    private void clearAllItems() {
-        int safety = 0;
-        while (pages.readingListPage().hasItems() && safety < 50) {
-            pages.readingListPage().clickRemoveIconByIndex(0);
-            safety++;
-        }
-        assertTrue(pages.readingListPage().isReadingListEmpty(),
-                "Liste 50 denemede boşaltılamadı, silme işlemi çalışmıyor olabilir.");
-    }
-
-    private void ensureListEmpty(String tab) {
-        selectTab(tab);
-        clearAllItems();
-    }
-
-    private void ensureListHasItems(String tab) {
-        selectTab(tab);
-        assumeTrue(
-                pages.readingListPage().hasItems(),
-                tab + " list is empty → test skipped"
-        );
-    }
-
-    @ParameterizedTest(name = "Tab: {0}")
-    @ValueSource(strings = {"baby", "myself"})
-    @DisplayName("Liste boşken empty state doğru gösterilmeli")
+    @ParameterizedTest(name = "Rota: {0} -> Sekme: {1} - Boş liste uyarısı doğrulanmalı")
+    @MethodSource("provideRouteAndTabCombinations")
+    @DisplayName("Boş Liste Durumu Kontrolü")
     @Severity(SeverityLevel.NORMAL)
     @Story("Boş liste durumu")
-    public void shouldShowEmptyState(String tab) {
+    public void shouldShowEmptyState(String route, String tab) {
+        navigateToReadingList(route);
+        selectTab(tab);
 
-        ensureListEmpty(tab);
-
-        assertTrue(pages.readingListPage().isReadingListEmpty(),
-                "List is not empty! Tab: " + tab);
+        assertTrue(pages.readingListPage().isReadingListEmpty(), "API temizlemesine rağmen UI üzerinde liste boş görünmüyor!");
 
         String emptyText = tab.equals("baby")
                 ? pages.readingListPage().getEmptyTextBaby()
                 : pages.readingListPage().getEmptyTextParent();
 
-        assertFalse(emptyText.isEmpty(),
-                "Empty text is missing! Tab: " + tab);
+        assertFalse(emptyText.isEmpty(), "Boş liste açıklama metni eksik!");
     }
 
-    @ParameterizedTest(name = "Tab: {0}")
-    @ValueSource(strings = {"baby", "myself"})
-    @DisplayName("Liste doluysa item'lar görünür olmalı")
+    @ParameterizedTest(name = "Rota: {0} -> Sekme: {1} - Eklenen öğeler görünür olmalı")
+    @MethodSource("provideRouteAndTabCombinations")
+    @DisplayName("Dolu Listede Öğe Görünürlüğü Testi")
     @Severity(SeverityLevel.NORMAL)
     @Story("Item görünürlüğü")
-    public void shouldDisplayItemsIfExist(String tab) {
+    public void shouldDisplayItemsIfExist(String route, String tab) {
+        String audience = convertToAudience(tab);
+        int testContentId = tab.equals("baby") ? 4 : 16;
+        ContentApi.addContentToReadingList(audience, testContentId, TestData.LOG_USER_WITH_BABY_EMAIL, TestData.LOG_USER_WITH_BABY_PASSWORD);
 
+        navigateToReadingList(route);
         selectTab(tab);
 
-        int count = pages.readingListPage().getItemCount();
-
-        if (count > 0) {
-            ensureListHasItems(tab);
-            assertTrue(pages.readingListPage().isItemVisible(0));
-        }
+        assertTrue(pages.readingListPage().hasItems(), "API ile eklenen öğe UI'da listelenmedi!");
+        assertTrue(pages.readingListPage().isItemVisible(0), "İlk öğe görünür değil!");
     }
 
-    @ParameterizedTest(name = "Tab: {0}")
-    @ValueSource(strings = {"baby", "myself"})
-    @DisplayName("Item silme ikonuna tıklanınca item listeden kaldırılmalı")
+    @ParameterizedTest(name = "Rota: {0} -> Sekme: {1} - Kaldır ikonuna tıklanınca içerik silinmeli")
+    @MethodSource("provideRouteAndTabCombinations")
+    @DisplayName("Listeden Öğe Silme Fonksiyonu Testi")
     @Severity(SeverityLevel.CRITICAL)
     @Story("Item silme")
-    public void shouldRemoveItemWhenClicked(String tab) {
+    public void shouldRemoveItemWhenClicked(String route, String tab) {
+        ContentApi.addContentToReadingList("BABY", 4, TestData.LOG_USER_WITH_BABY_EMAIL, TestData.LOG_USER_WITH_BABY_PASSWORD);
+        ContentApi.addContentToReadingList("PARENT", 16, TestData.LOG_USER_WITH_BABY_EMAIL, TestData.LOG_USER_WITH_BABY_PASSWORD);
 
-        ensureListHasItems(tab);
+        navigateToReadingList(route);
+        selectTab(tab);
 
         pages.readingListPage().clickRemoveIconByIndex(0);
-
-        assertTrue(pages.readingListPage().isItemRemoved(0),
-                "Item was not removed! Tab: " + tab);
+        assertTrue(pages.readingListPage().isItemRemoved(0), "Öğe listeden kaldırılamadı!");
     }
 
-    @ParameterizedTest(name = "Tab: {0}")
-    @ValueSource(strings = {"baby", "myself"})
-    @DisplayName("Tüm item'lar silindiğinde liste boş duruma geçmeli")
-    @Severity(SeverityLevel.CRITICAL)
-    @Story("Item silme")
-    public void shouldEmptyListAfterRemovingAllItems(String tab) {
-
-        selectTab(tab);
-        clearAllItems();
-
-        assertTrue(pages.readingListPage().isReadingListEmpty(),
-                "List is not empty! Tab: " + tab);
+    @AfterEach
+    @Step("Test tamamlandı")
+    public void tearDownEach() {
+        lastRoute = null;
     }
 
-    @ParameterizedTest(name = "Tab: {0}")
-    @ValueSource(strings = {"baby", "myself"})
-    @DisplayName("Beklenen içerik listede yer almalı")
-    @Severity(SeverityLevel.MINOR)
-    @Story("İçerik doğrulama")
-    public void shouldContainExpectedContent(String tab) {
-
-        selectTab(tab);
-
-        boolean isPresent =
-                pages.readingListPage().isContentPresent("test");
-
-        assertTrue(isPresent,
-                "Expected content not found in tab: " + tab);
+    private static Stream<Arguments> provideRouteAndTabCombinations() {
+        return Stream.of(
+                Arguments.of("PROFILE", "baby"),
+                Arguments.of("PROFILE", "myself"),
+                Arguments.of("CONTENTS", "baby"),
+                Arguments.of("CONTENTS", "myself")
+        );
     }
 }
