@@ -1,5 +1,7 @@
 package base;
 
+import data.TestData;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 import io.appium.java_client.AppiumBy;
@@ -46,6 +48,7 @@ public class AppFlowManager {
 
         while (safetyCounter < 15) {
             int status = pages.homePage().getOnboardingStatus();
+            System.out.println("Onboarding status: " + status);
 
             try {
                 if (status == 1) {
@@ -59,8 +62,7 @@ public class AppFlowManager {
                     break;
                 }
             } catch (TimeoutException e) {
-                // Buton, kontrol ile tıklama arasında kaybolmuş olabilir (son adım geçişi).
-                // Döngü bir sonraki turda durumu yeniden kontrol edecek.
+                // Buton, kontrol ile tıklama arasında kaybolmuş olabilir (adım geçişi).
             }
 
             safetyCounter++;
@@ -84,5 +86,17 @@ public class AppFlowManager {
     // Yardımcı metot: Element var mı kontrolü (Hızlı kontrol için)
     private boolean isElementPresent(By by) {
         return driver.findElements(by).size() > 0;
+    }
+
+    @Step("Silinebilir test kullanıcısı kayıt ediliyor ve ana sayfaya kadar ilerleniyor")
+    public String registerDisposableUserForDelete() {
+        String email = TestData.generateEmail();
+        String phone = TestData.generatePhoneNumber();
+        goToLogin();
+        pages.loginPage().clickGoToSignUp();
+        pages.registerPage().fillRegisterForm("Test",email, phone, TestData.DELETE_CANCEL_TEST_PASSWORD);
+        pages.registerPage().clickRegister();
+
+        return email;
     }
 }

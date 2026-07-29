@@ -4,7 +4,6 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import base.BasePage;
@@ -40,7 +39,8 @@ public class HomePage extends BasePage {
     private final By navigationSchedule = AppiumBy.accessibilityId("Takvim");
 
     // Onboarding Butonları
-    private final By onboardingNextButton = AppiumBy.accessibilityId("onboarding_next_button");
+    private final By onboardingNextButton = By.xpath("//*[starts-with(@content-desc,'onboarding_next_button')]");
+    //onboarding_next_button_1, onboarding_next_button_2,onboarding_next_button_3, onboarding_next_button_4, onboarding_next_button_5, onboarding_next_button_6, onboarding_next_button_7
     private final By onboardingDoneButton = AppiumBy.accessibilityId("onboarding_done_button");
 
     @Step("Ana sayfanın görüntülendiği doğrulanıyor")
@@ -51,6 +51,10 @@ public class HomePage extends BasePage {
                 return longWait.until(ExpectedConditions.visibilityOfElementLocated(homeHeader)).isDisplayed();
             } catch (StaleElementReferenceException e) {
                 attempts++;
+            } catch (TimeoutException e) {
+                System.out.println("HOME BULUNAMADI, PAGE SOURCE:");
+                System.out.println(driver.getPageSource());
+                throw e;
             }
         }
         throw new StaleElementReferenceException("Ana sayfa elementi 3 denemede stabilize olmadı: " + homeHeader);
@@ -65,9 +69,9 @@ public class HomePage extends BasePage {
     public int getOnboardingStatus() {
         try {
             WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(4));
-            shortWait.until(driver ->
-                    !driver.findElements(onboardingNextButton).isEmpty()
-                            || !driver.findElements(onboardingDoneButton).isEmpty()
+            shortWait.until(d ->
+                    !d.findElements(onboardingNextButton).isEmpty()
+                            || !d.findElements(onboardingDoneButton).isEmpty()
             );
         } catch (TimeoutException e) {
             // 4 saniyede onboarding hiç gelmediyse, gerçekten yok demektir

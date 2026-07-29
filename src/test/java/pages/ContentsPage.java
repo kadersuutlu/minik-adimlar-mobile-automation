@@ -2,6 +2,7 @@ package pages;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import base.BasePage;
@@ -41,8 +42,14 @@ public class ContentsPage extends BasePage{
 
     @Step("İlk içerik başlığı alındı")
     public String getFirstContentTitle() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(contentTitles));
-        return driver.findElements(contentTitles).get(0).getText();
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(contentTitles));
+            return driver.findElements(contentTitles).get(0).getText();
+        } catch (StaleElementReferenceException e) {
+            // DOM tam o anda yenilendi, tekrar dene
+            wait.until(ExpectedConditions.visibilityOfElementLocated(contentTitles));
+            return driver.findElements(contentTitles).get(0).getText();
+        }
     }
 
     @Step("Bebek içerikleri sekmesine tıklandı")

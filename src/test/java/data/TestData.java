@@ -1,7 +1,5 @@
 package data;
 
-import utils.ConfigReader;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -13,12 +11,15 @@ public class TestData {
         return "test_" + timestamp + "@test.com";
     }
 
-    public static final String LOG_VALID_EMAIL = ConfigReader.get("login.test.email");
-    public static final String LOG_VALID_PASSWORD = ConfigReader.get("login.test.password");
+    public static String generatePhoneNumber() {
+        long randomPart = (long) (Math.random() * 900_000_000L) + 100_000_000L;
+        return "5" + randomPart;
+    }
 
     // ===========================
     // Register Module
     // ===========================
+
     public static final String REG_VALID_PASSWORD = "Test1234!";
     public static final String REG_VALID_NAME = "Test User";
     public static final String REG_VALID_PHONE = "5551234567";
@@ -49,6 +50,7 @@ public class TestData {
     // ===========================
     // Forgot Password Module
     // ===========================
+
     public static final String FP_VALID_EMAIL = "unique_user1@test.com";
     public static final String FP_INVALID_EMAIL = "invalid_email_format";
     public static final String FP_UNREGISTERED_EMAIL = "not_registered@test.com";
@@ -64,21 +66,20 @@ public class TestData {
     // ===========================
     // Add First Baby Module
     // ===========================
+
     public static final String BABY_VALID_NAME = "Mihra";
     public static final String BABY_VALID_BIRTHDATE = "17.02.2024";
-    public static final String BABY_VALID_GENDER_GIRL = "Girl";
-    public static final String BABY_VALID_GENDER_BOY = "Boy";
     public static final String BABY_VALID_RELATIONSHIP_MOTHER = "Anne";
-    public static final String BABY_VALID_RELATIONSHIP_FATHER = "Baba";
 
     public static final String BABY_EMPTY_NAME = "";
     public static final String BABY_EMPTY_BIRTHDATE = "";
-    public static final String BABY_FUTURE_BIRTHDATE = "17.02.2030";
-    public static final String BABY_INVALID_DATE_FORMAT = "2024/17/02";
 
-    public static final String BABY_GENDER_NONE = "";
-    public static final String BABY_RELATIONSHIP_NONE = "";
+    // ===========================
+    // Profile Module
+    // ===========================
 
-    public static final String BABY_PHOTO_PATH_GALLERY = "/storage/emulated/0/DCIM/Camera/babyphoto.jpg";
-    public static final String BABY_ONLY_ONE_GENDER_SELECTED = "Toggle behavior";
+    public static final String DELETE_CANCEL_TEST_EMAIL = "delete_cancel_test@test.com";
+    public static final String DELETE_CANCEL_TEST_PASSWORD = "Test123!";
+    public static final String PRIVACY_POLICY_URL = "https://minikadimlar.site/gizlilik-politikasi.html";
+    public static final String USER_AGREEMENT_URL = "https://minikadimlar.site/kullanim-kosullari.html";
 }

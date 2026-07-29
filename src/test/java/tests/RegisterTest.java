@@ -7,9 +7,6 @@ import base.BaseTest;
 import data.TestData;
 import utils.AccountCleanupUtil;
 
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RegisterTest extends BaseTest {
 
     private String registeredEmail;
+    private String registeredPhoneNumber;
 
     @BeforeEach
     public void setupPage() {
@@ -143,11 +141,12 @@ public class RegisterTest extends BaseTest {
     @Story("Başarılı kayıt")
     public void successfulRegisterRedirectsToAddFirstBabyPage() {
         registeredEmail = TestData.generateEmail();
+        registeredPhoneNumber= TestData.generatePhoneNumber();
 
         pages.registerPage().fillRegisterForm(
                 TestData.REG_VALID_NAME,
                 registeredEmail,
-                TestData.REG_VALID_PHONE,
+                registeredPhoneNumber,
                 TestData.REG_VALID_PASSWORD
         );
         pages.registerPage().clickRegister();

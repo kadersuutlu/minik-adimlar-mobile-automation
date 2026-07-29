@@ -24,7 +24,6 @@ public class HomeTest extends BaseTest {
     @BeforeAll
     public void loginAndPassOnboardingOnce() {
         resetApp();
-        resetApp();
         flow.loginAndCleanStart(
                 TestData.LOG_USER_WITH_BABY_EMAIL,
                 TestData.LOG_USER_WITH_BABY_PASSWORD
