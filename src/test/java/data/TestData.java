@@ -16,6 +16,18 @@ public class TestData {
         return "5" + randomPart;
     }
 
+    public static String generatePassword() {
+        String timestamp = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("MMddHHmmss"));
+        return "Test_" + timestamp + "!";
+    }
+
+    public static String generateName() {
+        String timestamp = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("MMddHHmmss"));
+        return "TestUser_" + timestamp;
+    }
+
     // ===========================
     // Register Module
     // ===========================
@@ -82,4 +94,11 @@ public class TestData {
     public static final String DELETE_CANCEL_TEST_PASSWORD = "Test123!";
     public static final String PRIVACY_POLICY_URL = "https://minikadimlar.site/gizlilik-politikasi.html";
     public static final String USER_AGREEMENT_URL = "https://minikadimlar.site/kullanim-kosullari.html";
+
+    // ===========================
+    // Personal Info Module
+    // ===========================
+
+    public static String PERSONAL_INFO_TEST_EMAIL = "personal_info_test@test.com";
+    public static String PERSONAL_INFO_TEST_PASSWORD = "PersonalInfo123!";
 }

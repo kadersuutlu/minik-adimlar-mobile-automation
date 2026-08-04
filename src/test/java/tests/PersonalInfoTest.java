@@ -1,83 +1,99 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import data.TestData;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import base.AppFlowManager;
 import base.BaseTest;
 
+@Feature("Kişisel Bilgilerim")
 public class PersonalInfoTest extends BaseTest {
 
-	@BeforeEach
-	public void setUpPage() {
+    private String dynamicEmail;
+    private String dynamicPhone;
+    private String dynamicName;
+    private String dynamicPassword;
 
-		AppFlowManager flow = new AppFlowManager(driver,pages);
+    @BeforeEach
+    public void setupPage() {
+        resetApp();
 
-		flow.loginAndCleanStart("genctestmuhendis@gmail.com", "Test123");
+        flow.loginAndCleanStart(TestData.PERSONAL_INFO_TEST_EMAIL, TestData.PERSONAL_INFO_TEST_PASSWORD);
 
-		assertTrue(pages.homePage().isDisplayed(), "Onboarding sonrası ana sayfa yüklenemedi!");
+        assertTrue(pages.homePage().isDisplayed(), "Onboarding sonrası ana sayfa yüklenemedi!");
+        pages.homePage().clickProfileIcon();
+        pages.profilePage().clickProfilePersonalInfoButton();
 
-		pages.homePage().clickProfileIcon();
-		pages.profilePage().clickProfilePersonalInfoButton();
-	}
+        dynamicEmail = TestData.generateEmail();
+        dynamicPhone = TestData.generatePhoneNumber();
+        dynamicName = TestData.generateName();
+        dynamicPassword = TestData.generatePassword();
+    }
 
-	@Test
-	public void testPersonalInfoPageIsDisplayed() {
-		assertTrue(pages.personalInfoPage().isDisplayed(), "Kişisel Bilgiler sayfası görüntülenemedi!");
-	}
+    @Test
+    @DisplayName("Kişisel bilgiler sayfası görüntülenmeli")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Kişisel bilgiler ekranı görünürlüğü")
+    public void personalInfoScreenShouldBeDisplayed() {
+        assertTrue(pages.personalInfoPage().isDisplayed(), "Kişisel Bilgiler sayfası görüntülenemedi!");
+    }
 
-	@Test
-	public void testUpdatePersonalInfoSuccess() {
-		pages.personalInfoPage().enterName("Yeni İsim");
-		pages.personalInfoPage().enterEmail("yeniemail2@test.com");
-		pages.personalInfoPage().enterPhone("5550009988");
-		driver.hideKeyboard();
-		pages.personalInfoPage().clickSave();
+    @Test
+    @DisplayName("Bilgiler güncellenince e-posta değişikliği onayı ile onboarding sayfasına yönlendirilmeli")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Bilgi güncelleme")
+    public void shouldUpdatePersonalInfoSuccessfully() {
+        pages.personalInfoPage().enterName(dynamicName);
+        pages.personalInfoPage().enterEmail(dynamicEmail);
+        pages.personalInfoPage().enterPhone(dynamicPhone);
+        driver.hideKeyboard();
+        pages.personalInfoPage().clickSave();
 
-		assertEquals(pages.personalInfoPage().getAlertTitleText(), "E-posta Değişikliği");
+        assertTrue(pages.secondPage().isLoginButtonDisplayed(), "E-posta değişikliği sonrası onboarding sayfasına yönlendirilmedi!");
 
-		pages.personalInfoPage().clickAlertDevamEt();
+        TestData.PERSONAL_INFO_TEST_EMAIL = dynamicEmail;
+    }
 
-		assertTrue(pages.loginPage().isDisplayed(), "Login ekranına yönlendirme");
-	}
+    @Test
+    @DisplayName("E-posta değişikliği iptal edilince profil sayfasında kalınmalı")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Bilgi güncelleme")
+    public void shouldStayOnProfilePageWhenCancelEmailChange() {
+        pages.personalInfoPage().enterEmail(dynamicEmail);
+        driver.hideKeyboard();
 
-	public void testCancelEmailChange() {
-		pages.personalInfoPage().enterEmail("iptal_testi@gmail.com");
-		driver.hideKeyboard();
-		pages.personalInfoPage().clickSave();
+        pages.personalInfoPage().clickCancel();
 
-		assertEquals(pages.personalInfoPage().getAlertTitleText(), "E-posta Değişikliği");
+        assertTrue(pages.profilePage().isDisplayed(), "İptal sonrası Profil sayfasından çıkıldı!");
+    }
 
-		pages.personalInfoPage().clickAlertIptal();
+    @Test
+    @DisplayName("Geçersiz e-posta formatında hata mesajı görüntülenmeli")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Doğrulama")
+    public void shouldShowErrorForInvalidEmailFormat() {
+        pages.personalInfoPage().enterEmail(TestData.REG_INVALID_EMAIL);
 
-		assertTrue(pages.profilePage().isDisplayed(), "İptal sonrası Personal Info sayfasından çıkıldı!");
-	}
+        String errorText = pages.personalInfoPage().getEmailErrorText();
 
-	@Test
-	public void testInvalidEmailFormatError() {
-		pages.personalInfoPage().enterEmail("gecersiz_email_formatı");
-		pages.personalInfoPage().clickSave();
+        assertTrue(errorText.contains("Geçerli"), "Geçersiz e-posta hata mesajı görüntülenmeli!");
+    }
 
-		String errorText = pages.personalInfoPage().getEmailErrorText();
+    @Test
+    @DisplayName("Vazgeç butonuna basılınca değişiklikler kaydedilmeden profil sayfasına dönülmeli")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Navigasyon")
+    public void shouldDiscardChangesWhenCancelClicked() {
+        pages.personalInfoPage().enterName(dynamicName);
+        pages.personalInfoPage().clickCancel();
 
-		assertTrue(errorText.contains("Geçerli"), "Invalid email error message should be displayed");
-
-	}
-
-	@Test
-	public void testCancelButtonFunctionality() {
-		pages.personalInfoPage().enterName("Kaydedilmeyecek İsim");
-		pages.personalInfoPage().clickCancel();
-
-		assertTrue(pages.profilePage().isDisplayed());
-	}
-
-	@Test
-	public void testNavigationBackToProfile() {
-		pages.personalInfoPage().clickPrevious();
-		assertTrue(pages.profilePage().isDisplayed(), "Geri butonuna basınca Profile sayfasına dönülmedi!");
-	}
+        assertTrue(pages.profilePage().isDisplayed(), "Vazgeç sonrası Profil sayfasına dönülmedi!");
+    }
 }

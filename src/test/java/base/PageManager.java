@@ -1,25 +1,7 @@
 package base;
 
 import io.appium.java_client.android.AndroidDriver;
-import pages.AddBabyPage;
-import pages.AddFirstBabyPage;
-import pages.ChangePasswordPage;
-import pages.ContentsPage;
-import pages.ForgotPasswordPage;
-import pages.HomePage;
-import pages.LoginPage;
-import pages.MyBabiesPage;
-import pages.MyBabyPage;
-import pages.NotificationPage;
-import pages.OnboardingFirstPage;
-import pages.OnboardingSecondPage;
-import pages.PersonalInfoPage;
-import pages.PrivacyPolicyPage;
-import pages.ProfilePage;
-import pages.ReadingListPage;
-import pages.RegisterPage;
-import pages.ScedulePage;
-import pages.UserAgreementPage;
+import pages.*;
 
 public class PageManager {
     private AndroidDriver driver;
@@ -31,6 +13,12 @@ public class PageManager {
     private HomePage homePage;
     private ContentsPage contentsPage;
     private MyBabyPage myBabyPage;
+    private SleepTrackingPage sleepTrackingPage;
+    private NutritionTrackingPage nutritionTrackingPage;
+    private DiaperTrackingPage diaperTrackingPage;
+    private GrowthTrackingPage growthTrackingPage;
+    private HealthTrackingPage healthTrackingPage;
+    private FirstTrackingPage firstTrackingPage;
     private NotificationPage notificationPage;
     private AddBabyPage addBabyPage;
     private ScedulePage scedulePage;
@@ -95,6 +83,48 @@ public class PageManager {
             myBabyPage = new MyBabyPage(driver);
         }
         return myBabyPage;
+    }
+
+    public SleepTrackingPage sleepTrackingPage() {
+        if (sleepTrackingPage == null) {
+            sleepTrackingPage = new SleepTrackingPage(driver);
+        }
+        return sleepTrackingPage;
+    }
+
+    public NutritionTrackingPage nutritionTrackingPage() {
+        if (nutritionTrackingPage == null) {
+            nutritionTrackingPage = new NutritionTrackingPage(driver);
+        }
+        return nutritionTrackingPage;
+    }
+
+    public DiaperTrackingPage diaperTrackingPage() {
+        if (diaperTrackingPage == null) {
+            diaperTrackingPage = new DiaperTrackingPage(driver);
+        }
+        return diaperTrackingPage;
+    }
+
+    public GrowthTrackingPage growthTrackingPage() {
+        if (growthTrackingPage == null) {
+            growthTrackingPage = new GrowthTrackingPage(driver);
+        }
+        return growthTrackingPage;
+    }
+
+    public HealthTrackingPage healthTrackingPage() {
+        if (healthTrackingPage == null) {
+            healthTrackingPage = new HealthTrackingPage(driver);
+        }
+        return healthTrackingPage;
+    }
+
+    public FirstTrackingPage firstTrackingPage() {
+        if (firstTrackingPage == null) {
+            firstTrackingPage = new FirstTrackingPage(driver);
+        }
+        return firstTrackingPage;
     }
 
     public NotificationPage notificationPage() {
