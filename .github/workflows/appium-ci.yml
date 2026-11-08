@@ -5,8 +5,11 @@ on:
     branches: [ "main" ]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  appium-tests:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,17 +21,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          cache: maven
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Install Appium 2.x
-        run: npm install -g appium@2
-
-      - name: Install UiAutomator2 driver
-        run: appium driver install uiautomator2@2.29.1
-
-      - name: Run Maven tests
-        run: mvn test
+      # CI ortamında emulator/cihaz yoktur: BaseTest, CI=true iken UI testlerini
+      # (Assumptions) atlar. Bu adım projenin derlendiğini ve testlerin
+      # keşfedildiğini doğrular.
+      - name: Build and run tests (UI tests are skipped in CI)
+        run: mvn -B test

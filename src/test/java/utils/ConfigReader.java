@@ -10,20 +10,42 @@ public class ConfigReader {
     static {
         try (InputStream input = ConfigReader.class.getClassLoader()
                 .getResourceAsStream("config.properties")) {
-            if (input == null) {
-                throw new RuntimeException("config.properties bulunamadı");
+            if (input != null) {
+                properties.load(input);
             }
-            properties.load(input);
         } catch (IOException e) {
             throw new RuntimeException("config.properties yüklenemedi: " + e.getMessage());
         }
     }
 
     public static String get(String key) {
-        String value = properties.getProperty(key);
+        String value = find(key);
         if (value == null) {
-            throw new RuntimeException("config.properties içinde '" + key + "' bulunamadı");
+            throw new RuntimeException("'" + key + "' bulunamadı. config.properties dosyasına ekleyin.");
         }
         return value;
+    }
+
+    // Test verisi sabitleri için: yerelde eksikse hata verir, CI'da boş döner
+    public static String getLenientInCi(String key) {
+        String value = find(key);
+        if (value != null) {
+            return value;
+        }
+        if (System.getenv("CI") != null) {
+            return "";
+        }
+        return get(key);
+    }
+
+    private static String find(String key) {
+        String value = System.getProperty(key);
+        if (value == null || value.isBlank()) {
+            value = System.getenv(key.toUpperCase().replace('.', '_'));
+        }
+        if (value == null || value.isBlank()) {
+            value = properties.getProperty(key);
+        }
+        return (value == null || value.isBlank()) ? null : value;
     }
 }

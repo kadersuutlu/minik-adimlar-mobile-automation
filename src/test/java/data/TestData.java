@@ -1,5 +1,7 @@
 package data;
 
+import utils.ConfigReader;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -32,7 +34,7 @@ public class TestData {
     // Register Module
     // ===========================
 
-    public static final String REG_VALID_PASSWORD = "Test1234!";
+    public static final String REG_VALID_PASSWORD = ConfigReader.getLenientInCi("register.valid.password");
     public static final String REG_VALID_NAME = "Test User";
     public static final String REG_VALID_PHONE = "5551234567";
 
@@ -41,17 +43,17 @@ public class TestData {
     public static final String REG_SHORT_PASSWORD = "Abc12";
     public static final String REG_NO_UPPERCASE_PASSWORD = "test123";
     public static final String REG_NO_LOWERCASE_PASSWORD = "TEST123";
-    public static final String REG_NO_SPECIAL_CHAR_PASSWORD = "Test1234";
+    public static final String REG_NO_SPECIAL_CHAR_PASSWORD = REG_VALID_PASSWORD.replaceAll("[^A-Za-z0-9]", "");
 
     // ===========================
     // Login Module
     // ===========================
 
-    public static final String LOG_USER_WITH_BABY_EMAIL = "kullanici_bebekli@test.com";
-    public static final String LOG_USER_WITH_BABY_PASSWORD = "Test1234!";
+    public static final String LOG_USER_WITH_BABY_EMAIL = ConfigReader.getLenientInCi("user.with.baby.email");
+    public static final String LOG_USER_WITH_BABY_PASSWORD = ConfigReader.getLenientInCi("user.with.baby.password");
 
-    public static final String LOG_USER_WITHOUT_BABY_EMAIL = "kullanici_bebeksiz@test.com";
-    public static final String LOG_USER_WITHOUT_BABY_PASSWORD = "Test1234!";
+    public static final String LOG_USER_WITHOUT_BABY_EMAIL = ConfigReader.getLenientInCi("user.without.baby.email");
+    public static final String LOG_USER_WITHOUT_BABY_PASSWORD = ConfigReader.getLenientInCi("user.without.baby.password");
 
     public static final String LOG_INVALID_EMAIL_FORMAT = "invalid_email_format";
     public static final String LOG_WRONG_PASSWORD = "WrongPass1";
@@ -63,7 +65,7 @@ public class TestData {
     // Forgot Password Module
     // ===========================
 
-    public static final String FP_VALID_EMAIL = "unique_user1@test.com";
+    public static final String FP_VALID_EMAIL = ConfigReader.getLenientInCi("forgot.valid.email");
     public static final String FP_INVALID_EMAIL = "invalid_email_format";
     public static final String FP_UNREGISTERED_EMAIL = "not_registered@test.com";
 
@@ -90,8 +92,8 @@ public class TestData {
     // Profile Module
     // ===========================
 
-    public static final String DELETE_CANCEL_TEST_EMAIL = "delete_cancel_test@test.com";
-    public static final String DELETE_CANCEL_TEST_PASSWORD = "Test123!";
+    public static final String DELETE_CANCEL_TEST_EMAIL = ConfigReader.getLenientInCi("delete.cancel.email");
+    public static final String DELETE_CANCEL_TEST_PASSWORD = ConfigReader.getLenientInCi("delete.cancel.password");
     public static final String PRIVACY_POLICY_URL = "https://minikadimlar.site/gizlilik-politikasi.html";
     public static final String USER_AGREEMENT_URL = "https://minikadimlar.site/kullanim-kosullari.html";
 

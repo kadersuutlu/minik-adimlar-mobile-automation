@@ -1,102 +1,87 @@
-# Minik Adımlar – Mobil Otomasyon Testleri
-
-Bu proje, React Native ile geliştirilen ve backend tarafında Supabase kullanan **Minik Adımlar** mobil uygulamasının fonksiyonel test otomasyon altyapısını içerir.
-
-## 📌 Proje Hakkında
-Uygulamanın uçtan uca (E2E) kullanıcı senaryolarını ve regresyon testlerini Appium 2.x kullanarak otomatize eder. Testler Android platformu üzerinde koşturulmaktadır.
-
-## 🎯 Test Kapsamı
-* **Auth:** Supabase tabanlı kayıt ve giriş işlemleri.
-* **Data:** CRUD (Oluştur, Oku, Güncelle, Sil) fonksiyonlarının doğrulanması.
-* **UI/UX:** Sayfa geçişleri, form validasyonları ve element etkileşimleri.
-* **Synchronization:** Backend verilerinin UI üzerindeki tutarlılığı.
-
-## 🛠 Kullanılan Teknolojiler
-* **Dil:** Java 17+
-* **Otomasyon:** Appium 2.x (UiAutomator2)
-* **Framework:** TestNG
-* **Build:** Maven
-* **Backend:** Supabase
-
-## 📂 Proje Yapısı
-```plaintext
-├── .github/
-│   └── workflows/
-│       └── appium-ci.yml        # CI pipeline (GitHub Actions)
-├── src/
-│   └── test/
-│       └── java/
-│           ├── tests            # TestNG test senaryoları
-│           └── base             # BaseTest (driver yönetimi & CI kontrolü)
-├── pom.xml
-└── README.md
+Minik Adımlar – Mobil Otomasyon Testleri
+React Native ile geliştirilen ve backend tarafında Supabase kullanan Minik Adımlar mobil uygulamasının uçtan uca (E2E) test otomasyon projesi. Testler Appium 2.x ile Android üzerinde koşar; bazı akışlar için test verisi hazırlama ve temizleme işleri REST API üzerinden yapılır.
+🎯 Test Kapsamı
+14 test sınıfı, yaklaşık 80 test metodu:
+Modül	Kapsam
+Onboarding	Karşılama ekranları
+Kayıt / Giriş	Geçerli ve geçersiz veri, şifre kuralları, hata mesajları
+Şifre	Şifremi unuttum (geçerli, süresi dolmuş, kullanılmış token), şifre değiştirme
+Bebek	İlk bebek ekleme, bebeklerim, bebek detayı
+Ana sayfa / İçerik	Ana sayfa, içerikler, okuma listesi
+Profil	Profil, kişisel bilgiler, hesap silme (onay ve iptal)
+🛠 Kullanılan Teknolojiler
+Dil: Java 17
+Otomasyon: Appium 2.x (UiAutomator2), `io.appium:java-client`
+Test framework: JUnit 5 (parametrik testler dahil)
+API çağrıları: REST Assured
+Raporlama: Allure Report
+Build: Maven
+CI: GitHub Actions
+Backend: Supabase
+🏗 Mimari
+Page Object Model: Her ekran için `pages` paketinde bir sınıf; `PageManager` sayfaları tek yerden sağlar.
+Akış yönetimi: `AppFlowManager`, birden çok ekrana yayılan ortak adımları (ör. girişe gitme) toplar.
+Temel sınıflar: `BaseTest` driver yaşam döngüsünü, `BasePage` ortak element etkileşimlerini yönetir.
+API katmanı: `api` paketi, test verisi hazırlamak için REST çağrılarını yapar.
+Test verisi: Rastgele veri `TestData` ile üretilir; hesap bilgileri ve adresler koda değil ayar dosyasına konur.
+Temizlik: `AccountCleanupUtil` ve `BabyCleanupUtil`, testlerin oluşturduğu kayıtları siler.
 ```
-Not: Proje şu anda erken aşamadadır. DriverFactory, ConfigReader gibi yardımcı
-bileşenlerin ilerleyen fazlarda utils paketi altına taşınması planlanmaktadır.
-
-## 📦 APK Dosyası Hakkında
-
-Testlerde kullanılan APK dosyası, dosya boyutu ve lisans kısıtları nedeniyle
-repo içerisine eklenmemiştir.
-
-Testlerin çalışabilmesi için:
-- Uygulamanın debug APK’sı local olarak temin edilmelidir
-- APK yolu BaseTest içerisinde manuel olarak ayarlanmalıdır
-
-Örnek:
-src/test/resources/app-debug.apk
-
-## 🏗 Otomasyon Mimarisi
-
-* **Page Object Model (POM):** UI elementleri ve iş mantığı (business logic) birbirinden izole edilmiştir.
-* **Centralized Driver:** WebDriver yönetimi `DriverFactory` üzerinden singleton yapısıyla sağlanır.
-* **Data Driven:** Test verileri harici dosyalardan (`.properties`) yönetilir.
-
-## 📱 Platform Desteği
-
-| Platform | Sürücü (Driver) | Durum |
-| :--- | :--- | :--- |
-| **Android** | UiAutomator2 | ✅ Aktif |
-| **iOS** | XCUITest | 📅 Planlanıyor |
-
-## 🚀 Testleri Çalıştırma
-
-### Appium Sunucusu:
+├── .github/workflows/appium-ci.yml   # CI (GitHub Actions)
+├── src/test/
+│   ├── java/
+│   │   ├── api/      # REST çağrıları
+│   │   ├── base/     # BaseTest, BasePage, PageManager, AppFlowManager
+│   │   ├── data/     # TestData
+│   │   ├── pages/    # Page Object sınıfları
+│   │   ├── tests/    # JUnit 5 test senaryoları
+│   │   └── utils/    # ConfigReader, temizlik yardımcıları
+│   └── resources/
+│       ├── allure.properties
+│       └── config.properties.example
+└── pom.xml
+```
+⚙️ Kurulum
+Gereksinimler: JDK 17, Maven, Node.js, Appium 2.x ve UiAutomator2 sürücüsü, bir Android cihaz veya emulator.
+Ayar dosyası: `src/test/resources/config.properties.example` dosyasını `config.properties` adıyla kopyalayıp doldurun. Bu dosya `.gitignore`'dadır, repoya gönderilmez.
+Her ayar ayrıca JVM argümanı (`-Dapi.base.url=...`) veya ortam değişkeni (`API_BASE_URL`) olarak da verilebilir. Öncelik sırası: JVM argümanı → ortam değişkeni → `config.properties`.
+APK: Dosya boyutu ve lisans nedeniyle repoda yoktur. Debug APK'yı yerelde temin edip yolunu verin.
+🚀 Testleri Çalıştırma
 ```bash
+# Appium sunucusunu başlatın
 appium
-```
 
-### Test Koşumu:
+# Gerçek cihazda
+mvn clean test -Dapk.path=/yol/app-debug.apk -Ddevice.udid=<cihaz-udid>
+
+# Emulator'de
+mvn clean test -Dapk.path=/yol/app-debug.apk -Duse.emulator=true
+```
+Parametre	Varsayılan	Açıklama
+`apk.path`	yerel yol	Test edilecek APK
+`device.udid`	–	Gerçek cihazın UDID'si (`adb devices`)
+`use.emulator`	`false`	`true` ise emulator ayarları kullanılır
+📊 Raporlama (Allure)
 ```bash
-mvn clean test
+mvn allure:serve
 ```
-## 🔐 API Base URL Konfigürasyonu
-
-API base URL güvenlik nedeniyle repo içerisinde tutulmamaktadır.
-
-Testlerin çalışabilmesi için base URL JVM argument olarak verilmelidir.
-
-Örnek:
-
-mvn clean test -DbaseUrl=https://your-api-url.com
-
-Framework içerisinde değer şu şekilde okunur:
-
-System.getProperty("baseUrl");
-
-⚠️ Not: Gerçek API URL'leri, token'lar veya gizli bilgiler versiyon kontrolüne dahil edilmemektedir.
-
-## 🗺️ Yol Haritası
-
-- [x] **Faz 1: Temel Altyapı:** Android (UiAutomator2) mimarisinin kurulması, Page Object Model (POM) yapısının oluşturulması.
-- [x] **Faz 2: CI/CD Entegrasyonu:** GitHub Actions kullanarak temel bir pipeline oluşturulması (Kod push edildiğinde testlerin otomatik tetiklenmesi).
-
-Kod deposuna yapılan her push işleminde pipeline tetiklenmekte, UI testleri ise CI ortamında gerekli altyapı bulunmadığı için bilinçli olarak skip edilmektedir.
-
-- [ ] **Faz 3: Test Kapsamı:** Temel kullanıcı akışlarının (Happy Path) ve kritik regresyon senaryolarının otomatize edilmesi.
-- [ ] **Faz 4: Raporlama ve Analiz:** Allure Report entegrasyonu ile test sonuçlarının görselleştirilmesi ve hata anında otomatik ekran görüntüsü yakalama.
-- [ ] **Faz 5: Multi-Platform:** iOS (XCUITest) desteğinin eklenmesi ve cross-platform test kabiliyetinin artırılması.
-- [ ] **Faz 6: İleri Seviye Optimizasyon:** Paralel test koşumu ve Supabase üzerindeki test verilerinin otomatik temizlenmesi (Cleanup).
-
+Sonuçlar `target/allure-results` klasörüne yazılır; testlerde `@Feature`, `@Story` ve `@Severity` etiketleri kullanılır.
+🔄 CI
+Her push ve pull request'te GitHub Actions projeyi derler ve testleri çalıştırır. CI ortamında emulator veya cihaz olmadığı için `BaseTest`, `CI` ortam değişkeni tanımlıysa UI testlerini bilinçli olarak atlar.
+🔐 Gizli Bilgiler
+Hesap bilgileri, şifreler ve API adresleri repoda tutulmaz. `config.properties` yalnızca yerelde bulunur; CI'da değerler GitHub Secrets ile ortam değişkeni olarak verilir.
+📱 Platform Desteği
+Platform	Sürücü	Durum
+Android	UiAutomator2	✅ Aktif
+iOS	XCUITest	📅 Planlanıyor
+🗺️ Yol Haritası
+[x] Faz 1 – Temel altyapı: Android (UiAutomator2) ve Page Object Model yapısı
+[x] Faz 2 – CI: GitHub Actions ile derleme ve test pipeline'ı
+[x] Faz 3 – Test kapsamı: Ana kullanıcı akışları ve hata senaryoları (devam eden genişletme)
+[x] Faz 4 – Raporlama: Allure entegrasyonu
+[ ] Faz 4 – Raporlama: Hata anında otomatik ekran görüntüsü
+[x] Faz 6 – Test verisi temizliği: Testlerin oluşturduğu hesap ve bebek kayıtlarının silinmesi
+[ ] Faz 5 – Multi-platform: iOS (XCUITest) desteği
+[ ] Faz 6 – Optimizasyon: Paralel test koşumu
+[ ] CI: Emulator ile gerçek test koşumu
 ---
-> **Not:** Bu çalışma sadece test otomasyon kurgusunu ve QA yetkinliklerini sergilemek amacıyla paylaşılmıştır. Projenin kaynak kodlarını veya hassas kullanıcı verilerini içermez.
+> Bu çalışma test otomasyon becerilerimi sergilemek amacıyla paylaşılmıştır. Uygulamanın kaynak kodunu içermez.

@@ -1,20 +1,30 @@
 # Maven
 /target/
 
-# Eclipse
+# IDE
+.idea/
+*.iml
+.vscode/
 .classpath
 .project
 .settings/
+
+# Allure (rapor aracı ve çıktıları)
+.allure/
+allure-results/
+allure-report/
 
 # Logs
 *.log
 
 # OS
 .DS_Store
+Thumbs.db
 
-# Appium
+# Appium / uygulama paketleri
 *.apk
+*.aab
 *.app
 
-#api
+# Gizli ayarlar (örnek dosya haricinde)
 src/test/resources/config.properties

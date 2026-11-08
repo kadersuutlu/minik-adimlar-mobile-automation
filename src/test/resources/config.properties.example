@@ -1,3 +1,22 @@
-api.base.url=YOUR_API_BASE_URL
-test.user.email=YOUR_TEST_EMAIL
-test.user.password=YOUR_TEST_PASSWORD
+# Bu dosyayı "config.properties" adıyla kopyalayıp kendi değerlerinizle doldurun.
+# config.properties .gitignore'dadır, repoya gönderilmez.
+# Her anahtar -Dkey=value veya KEY_NAME ortam değişkeniyle de verilebilir.
+
+api.base.url=https://YOUR-API-URL
+
+# Kayıt testlerinde yeni (geçici) hesap açarken kullanılan geçerli şifre.
+# Gerçek hesaplarınızın şifresinden FARKLI olsun; en az bir büyük/küçük harf, rakam ve özel karakter içermeli.
+register.valid.password=YOUR_PASSWORD
+
+# Girişte kullanılan hesaplar
+user.with.baby.email=YOUR_EMAIL
+user.with.baby.password=YOUR_PASSWORD
+user.without.baby.email=YOUR_EMAIL
+user.without.baby.password=YOUR_PASSWORD
+
+# Şifremi unuttum akışı için kayıtlı hesap
+forgot.valid.email=YOUR_EMAIL
+
+# Hesap silme iptal testi için hesap
+delete.cancel.email=YOUR_EMAIL
+delete.cancel.password=YOUR_PASSWORD
