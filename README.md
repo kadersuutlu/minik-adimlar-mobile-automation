@@ -2,6 +2,9 @@
 
 [![CI](https://github.com/kadersuutlu/minik-adimlar-mobile-automation/actions/workflows/appium-ci.yml/badge.svg)](https://github.com/kadersuutlu/minik-adimlar-mobile-automation/actions/workflows/appium-ci.yml)
 
+**Minik Adımlar**, ebeveynlerin bebeklerinin gelişimini (beslenme, uyku, bez, büyüme, aşı ve gelişim anları) takip ettiği bir mobil uygulamadır. 
+Tanıtım sitesi: [minikadimlar.site](https://minikadimlar.site)
+
 React Native ile geliştirilen **Minik Adımlar** mobil uygulaması için yazılmış, Android üzerinde çalışan uçtan uca (E2E) test otomasyonu. Testler Appium 2.x ile uygulamayı gerçek kullanıcı gibi kullanır. Test verisi hazırlama ve temizleme işleri REST API üzerinden yapılır.
 
 Testler **canlı (production) ortama** karşı çalışır. Testlerin oluşturduğu hesap ve bebek kayıtları test bitince silinir.
